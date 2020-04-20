@@ -1,0 +1,19 @@
+version: '3.7'
+
+services:
+  mongo:
+    image: mongo:latest
+    ports:
+      - 27017:27017
+    healthcheck:
+      test: mongo mongo:27017/test <<< 'db.runCommand("ping").ok'
+      interval: 10s
+      timeout: 10s
+      retries: 5
+      start_period: 40s
+    volumes:
+      - mongo:/data/db
+
+
+volumes:
+  mongo:

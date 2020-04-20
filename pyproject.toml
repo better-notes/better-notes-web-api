@@ -1,0 +1,41 @@
+[tool.poetry]
+name = "web-api"
+version = "0.1.0"
+description = ""
+authors = ["Daniil Fedyaev <wintercitizen@evrone.com>"]
+
+[tool.poetry.dependencies]
+python = "^3.8"
+aiohttp = "^3.6.2"
+flake8 = "^3.7.9"
+mypy = "^0.770"
+black = "^19.10b0"
+msgpack = "^1.0.0"
+funcy = "^1.14"
+requests = "^2.23.0"
+uvloop = "^0.14.0"
+psycopg2-binary = "^2.8.4"
+yoyo-migrations = "^7.0.2"
+motor = "^2.1.0"
+dacite = "^1.4.0"
+
+[tool.poetry.dev-dependencies]
+pytest = "^5.2"
+flake8 = "^3.7.9"
+mypy = "^0.770"
+black = "^19.10b0"
+ipython = "^7.13.0"
+ipdb = "^0.13.2"
+pytest-aiohttp = "^0.3.0"
+factory_boy = "^2.12.0"
+snapshottest = "^0.5.1"
+
+[tool.black]
+line-length = 79
+py38 = true
+skip-string-normalization = true
+exclude = '(.git)'
+
+[build-system]
+requires = ["poetry>=0.12"]
+build-backend = "poetry.masonry.api"
