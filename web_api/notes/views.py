@@ -8,13 +8,13 @@ from web_api import commons
 routes = web.RouteTableDef()
 
 
-@routes.view('/', name='create_note')
+@routes.view('/api/v1/note/create/', name='create_note')
 class CreateNoteView(commons.views.StorableEntityView):
     interactor: interactors.NoteInteractor = interactors.NoteInteractor()
     value_class = values.Note
 
     async def post(self) -> web.Response:
-        value = await self.get_value()
-        entity = await self.interactor.add(value)
-        entity_data = dataclasses.asdict(entity)
-        return commons.responses.MSGPackResponse(data=entity_data)
+        values = await self.get_values()
+        entities = await self.interactor.add(values)
+        entities_data = list(map(dataclasses.asdict, entities))
+        return commons.responses.MSGPackResponse(data=entities_data)

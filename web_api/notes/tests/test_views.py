@@ -18,11 +18,10 @@ async def client(test_client: Any) -> test_utils.TestClient:
 
 class TestCreateNoteView:
     @pytest.fixture  # type: ignore
-    def note_data(self) -> entities.Note:
-        result: entities.Note = commons.msgpack.dumps(
-            dataclasses.asdict(factories.NoteFactory())
+    def note_data(self):
+        return commons.msgpack.dumps(
+            [dataclasses.asdict(factories.NoteFactory())]
         )
-        return result
 
     @pytest.fixture  # type: ignore
     def view_cls(

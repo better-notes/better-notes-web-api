@@ -5,6 +5,7 @@ from aiohttp import web
 
 from web_api.commons import values
 from web_api.commons import msgpack
+from funcy import partial
 
 
 class StorableEntityView(web.View):
@@ -12,10 +13,11 @@ class StorableEntityView(web.View):
 
     value_class: Any
 
-    async def get_value(self) -> Any:
+    async def get_values(self) -> Any:
         value_class_is_set = self.value_class != values.Value
         assert value_class_is_set, 'You must specify dataclass for view.'
 
         data = msgpack.loads(await self.request.read())
-        result = dacite.from_dict(data_class=self.value_class, data=data)
-        return result
+
+        from_dict = partial(dacite.from_dict, data_class=self.value_class)
+        return list(map(lambda o: from_dict(data=o), data))
