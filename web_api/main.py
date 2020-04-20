@@ -6,7 +6,8 @@ import uvloop
 
 
 def create_app(loop: asyncio.AbstractEventLoop) -> web.Application:
-    app = web.Application(loop=loop)
+    asyncio.set_event_loop(loop)
+    app = web.Application()
     app.add_routes(views.routes)
     return app
 
