@@ -15,7 +15,9 @@ class AbstractNoteRepository(abc.ABC):
         raise NotImplementedError
 
     @abc.abstractmethod
-    async def get(self, spec: commons.specs.Specification) -> entities.Note:
+    async def get(
+        self, spec: commons.specs.Specification
+    ) -> List[entities.Note]:
         raise NotImplementedError
 
 
@@ -75,5 +77,16 @@ class NoteRepository(AbstractNoteRepository):
             **value_data,
         )
 
-    async def get(self, spec: commons.specs.Specification) -> entities.Note:
-        raise NotImplementedError
+    async def get(
+        self, spec: commons.specs.Specification
+    ) -> List[entities.Note]:
+        result = self.notes_collection.find(spec.get_query())
+        raw_note_list = await result.to_list(
+            settings.REPOSITORY_DEFAULT_PAGE_SIZE
+        )
+        note_list = []
+        for note in raw_note_list:
+            note_list.append(
+                entities.Note(id_=commons.values.ID(note.pop('_id')), **note)
+            )
+        return note_list

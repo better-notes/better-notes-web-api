@@ -1,7 +1,7 @@
 import dataclasses
 
 from typing import List
-from web_api.notes import entities, repositories, values
+from web_api.notes import entities, repositories, values, specs
 
 
 @dataclasses.dataclass
@@ -15,3 +15,6 @@ class NoteInteractor:
         for value in values:
             added_value.append(await self.note_repository.add(value))
         return added_value
+
+    async def get(self) -> List[entities.Note]:
+        return await self.note_repository.get(specs.ListNoteSpecification())
