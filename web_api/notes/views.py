@@ -9,7 +9,7 @@ routes = web.RouteTableDef()
 
 
 @routes.view('/api/v1/note/create/', name='create_note')
-class CreateNoteView(commons.views.StorableEntityView):
+class CreateNoteView(commons.views.StorableEntityView[values.Note]):
     interactor: interactors.NoteInteractor = interactors.NoteInteractor()
     value_class = values.Note
 
@@ -21,7 +21,7 @@ class CreateNoteView(commons.views.StorableEntityView):
 
 
 @routes.view('/api/v1/note/read/', name='read_note')
-class ReadNoteView(commons.views.StorableEntityView):
+class ReadNoteView(commons.views.StorableEntityView[values.Note]):
     interactor: interactors.NoteInteractor = interactors.NoteInteractor()
     value_class = values.Note
 
