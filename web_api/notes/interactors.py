@@ -25,3 +25,8 @@ class NoteInteractor:
         self, entities: List[entities.NoteEntity]
     ) -> List[entities.NoteEntity]:
         return await self.note_repository.update(entities)
+
+    async def delete(
+        self, entities: List[entities.NoteEntity]
+    ) -> List[entities.NoteEntity]:
+        return await self.note_repository.delete(entities)
