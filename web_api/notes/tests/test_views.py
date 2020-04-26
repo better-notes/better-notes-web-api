@@ -1,5 +1,3 @@
-import dataclasses
-
 import pytest
 from aiohttp import web
 from motor import motor_asyncio
@@ -22,9 +20,7 @@ async def client(aiohttp_client, app):
 class TestCreateNoteView:
     @pytest.fixture
     def note_data(self):
-        return commons.msgpack.dumps(
-            [dataclasses.asdict(factories.NoteFactory())]
-        )
+        return commons.msgpack.dumps([factories.NoteValueFactory().as_dict()])
 
     @pytest.fixture
     def view_cls(
@@ -58,9 +54,7 @@ class TestCreateNoteView:
 class TestReadNoteView:
     @pytest.fixture  # type: ignore
     def note_data(self):
-        return commons.msgpack.dumps(
-            [dataclasses.asdict(factories.NoteFactory())]
-        )
+        return commons.msgpack.dumps([factories.NoteValueFactory().as_dict()])
 
     @pytest.fixture  # type: ignore
     def view_cls(
@@ -87,7 +81,7 @@ class TestReadNoteView:
         # And
         await interactors.NoteInteractor(
             repositories.NoteRepository(client=motor_client)
-        ).add(factories.NoteFactory.create_batch(3))
+        ).add(factories.NoteValueFactory.create_batch(3))
         # When
         res = await client.get('/', data=note_data)
         # Then

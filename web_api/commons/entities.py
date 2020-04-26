@@ -5,7 +5,7 @@ from web_api.commons import values
 
 
 @dataclasses.dataclass
-class Entity:
+class Entity(values.Value):
     """TODO:"""
 
     id_: values.ID

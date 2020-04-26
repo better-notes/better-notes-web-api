@@ -7,19 +7,19 @@ from web_api.commons import entities
 
 
 @dataclasses.dataclass
-class Tag(entities.Entity):
+class TagEntity(entities.Entity):
     name: str
 
     @classmethod
-    def from_dict(cls, data: Dict[str, Any]) -> 'Tag':
+    def from_dict(cls, data: Dict[str, Any]) -> 'TagEntity':
         return cls(**data)
 
 
 @dataclasses.dataclass
-class Note(entities.Entity):
+class NoteEntity(entities.Entity):
     text: str
-    tags: List[Tag]
+    tags: List[TagEntity]
 
     @classmethod
-    def from_dict(cls, data: Dict[str, Any]) -> 'Note':
-        return cls(tags=lmap(Tag.from_dict, data.pop('tags')), **data)
+    def from_dict(cls, data: Dict[str, Any]) -> 'NoteEntity':
+        return cls(tags=lmap(TagEntity.from_dict, data.pop('tags')), **data)

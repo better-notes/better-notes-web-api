@@ -10,11 +10,13 @@ class NoteInteractor:
         repositories.NoteRepository()
     )
 
-    async def add(self, values: List[values.Note]) -> List[entities.Note]:
+    async def add(
+        self, values: List[values.NoteValue]
+    ) -> List[entities.NoteEntity]:
         added_value = []
         for value in values:
             added_value.append(await self.note_repository.add(value))
         return added_value
 
-    async def get(self) -> List[entities.Note]:
+    async def get(self) -> List[entities.NoteEntity]:
         return await self.note_repository.get(specs.ListNoteSpecification())

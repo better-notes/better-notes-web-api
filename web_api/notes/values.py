@@ -5,11 +5,11 @@ from web_api.commons import values
 
 
 @dataclasses.dataclass
-class Tag(values.Value):
+class TagValue(values.Value):
     name: str
 
 
 @dataclasses.dataclass
-class Note(values.Value):
+class NoteValue(values.Value):
     text: str
-    tags: List[Tag]
+    tags: List[TagValue]

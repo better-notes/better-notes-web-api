@@ -11,7 +11,7 @@ class TestNoteInteractor:
     @pytest.mark.asyncio
     async def test_add_get(self, motor_client, snapshot) -> None:
         # Given
-        note_list = factories.NoteFactory.create_batch(3)
+        note_list = factories.NoteValueFactory.create_batch(3)
         # And
         interactor = interactors.NoteInteractor(
             repositories.NoteRepository(client=motor_client)

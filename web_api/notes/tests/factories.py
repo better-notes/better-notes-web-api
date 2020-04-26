@@ -3,16 +3,16 @@ import factory
 from web_api.notes import values
 
 
-class TagFactory(factory.Factory):  # type: ignore
+class TagValueFactory(factory.Factory):  # type: ignore
     class Meta:
-        model = values.Tag
+        model = values.TagValue
 
     name = factory.Sequence('tag #{0}'.format)
 
 
-class NoteFactory(factory.Factory):  # type: ignore
+class NoteValueFactory(factory.Factory):  # type: ignore
     class Meta:
-        model = values.Note
+        model = values.NoteValue
 
     text = 'Sample text'
-    tags = factory.List([factory.SubFactory(TagFactory)])
+    tags = factory.List([factory.SubFactory(TagValueFactory)])

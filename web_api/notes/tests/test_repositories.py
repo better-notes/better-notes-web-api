@@ -1,5 +1,3 @@
-import dataclasses
-
 import pytest
 from motor import motor_asyncio
 from snapshottest.pytest import PyTestSnapshotTest
@@ -16,9 +14,9 @@ class TestNoteRepository:
         snapshot: PyTestSnapshotTest,
     ) -> None:
         # Given
-        note = factories.NoteFactory()
+        note = factories.NoteValueFactory()
         repository = repositories.NoteRepository(client=motor_client)
         # When
         result = await repository.add(note)
         # Then
-        snapshot.assert_match(dataclasses.asdict(result))
+        snapshot.assert_match(result.as_dict())
