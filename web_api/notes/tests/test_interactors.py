@@ -21,3 +21,20 @@ class TestNoteInteractor:
         result = await interactor.get()
         # Then
         snapshot.assert_match(lmap(dataclasses.asdict, result))
+
+    @pytest.mark.asyncio
+    async def test_update(self, motor_client, snapshot) -> None:
+        # Given
+        interactor = interactors.NoteInteractor(
+            repositories.NoteRepository(client=motor_client)
+        )
+        # And
+        note_list = factories.NoteValueFactory.create_batch(3)
+        entity_list = await interactor.add(note_list)
+        # When
+        await interactor.update(
+            [dataclasses.replace(entity_list[0], text='New text')]
+        )
+        entity_list = await interactor.get()
+        # Then
+        assert entity_list[0].text == 'New text'

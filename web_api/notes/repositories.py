@@ -94,3 +94,15 @@ class NoteRepository(AbstractNoteRepository):
                 )
             )
         return note_list
+
+    async def update(
+        self, entities: List[entities.NoteEntity]
+    ) -> List[entities.NoteEntity]:
+        for entity in entities:
+            entity_data = entity.as_dict()
+            entity_data.pop('tags')
+            entity_data.pop('id_')
+            await self.notes_collection.update_one(
+                {'_id': entity.id_.value}, {'$set': entity_data},
+            )
+        return entities

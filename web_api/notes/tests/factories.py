@@ -2,6 +2,8 @@ import factory
 
 from web_api.notes import values
 
+# Value
+
 
 class TagValueFactory(factory.Factory):  # type: ignore
     class Meta:

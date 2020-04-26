@@ -20,3 +20,8 @@ class NoteInteractor:
 
     async def get(self) -> List[entities.NoteEntity]:
         return await self.note_repository.get(specs.ListNoteSpecification())
+
+    async def update(
+        self, entities: List[entities.NoteEntity]
+    ) -> List[entities.NoteEntity]:
+        return await self.note_repository.update(entities)
