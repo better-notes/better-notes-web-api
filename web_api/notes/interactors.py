@@ -4,10 +4,14 @@ from typing import List
 from web_api.notes import entities, repositories, values, specs
 
 
+def interactor_factory():
+    return repositories.NoteRepository()
+
+
 @dataclasses.dataclass
 class NoteInteractor:
-    note_repository: repositories.NoteRepository = (
-        repositories.NoteRepository()
+    note_repository: repositories.NoteRepository = dataclasses.field(
+        default_factory=interactor_factory,
     )
 
     async def add(

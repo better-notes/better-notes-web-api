@@ -1,4 +1,5 @@
 import abc
+import asyncio
 import dataclasses
 from datetime import datetime, timezone
 from typing import Any, List
@@ -21,12 +22,24 @@ class AbstractNoteRepository(abc.ABC):
         raise NotImplementedError
 
 
+def motor_client_factory():
+    loop = asyncio.get_event_loop()
+    return motor_asyncio.AsyncIOMotorClient(
+        settings.MONGO_HOST, settings.MONGO_PORT, io_loop=loop,
+    )
+
+
 @dataclasses.dataclass
 class NoteRepository(AbstractNoteRepository):
-    client: motor_asyncio.AsyncIOMotorClient = (
-        motor_asyncio.AsyncIOMotorClient(
-            settings.MONGO_HOST, settings.MONGO_PORT,
-        )
+    # client: motor_asyncio.AsyncIOMotorClient = (
+    #     motor_asyncio.AsyncIOMotorClient(
+    #         settings.MONGO_HOST,
+    #         settings.MONGO_PORT,
+    #         io_loop=asyncio.get_event_loop(),
+    #     )
+    # )
+    client: motor_asyncio.AsyncIOMotorClient = dataclasses.field(
+        default_factory=motor_client_factory,
     )
 
     def __post_init__(self) -> None:

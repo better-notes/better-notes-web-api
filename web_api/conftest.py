@@ -1,3 +1,5 @@
+import asyncio
+
 import factory
 import pytest
 from motor import motor_asyncio
@@ -25,3 +27,8 @@ async def clear_mongo(motor_client):  # type: ignore
     motor_client.drop_database(settings.MONGO_DATABASE)
     yield
     motor_client.drop_database(settings.MONGO_DATABASE)
+
+
+@pytest.fixture(autouse=True)
+def set_event_loop(loop):
+    asyncio.set_event_loop(loop)

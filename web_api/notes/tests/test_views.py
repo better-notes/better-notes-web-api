@@ -7,16 +7,6 @@ from web_api.notes import interactors, repositories, views
 from web_api.notes.tests import factories
 
 
-@pytest.fixture
-def app():
-    return
-
-
-@pytest.fixture
-async def client(aiohttp_client, app):
-    return await aiohttp_client(app)
-
-
 class TestCreateNoteView:
     @pytest.fixture
     def note_data(self):

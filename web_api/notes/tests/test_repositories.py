@@ -1,4 +1,3 @@
-import pytest
 from motor import motor_asyncio
 from snapshottest.pytest import PyTestSnapshotTest
 
@@ -7,7 +6,6 @@ from web_api.notes.tests import factories
 
 
 class TestNoteRepository:
-    @pytest.mark.asyncio  # type: ignore
     async def test_add(
         self,
         motor_client: motor_asyncio.AsyncIOMotorClient,

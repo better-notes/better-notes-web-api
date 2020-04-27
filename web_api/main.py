@@ -5,14 +5,14 @@ import asyncio
 import uvloop
 
 
-def create_app(loop: asyncio.AbstractEventLoop) -> web.Application:
+def create_app() -> web.Application:
     app = web.Application()
     app.add_routes(views.routes)
     return app
 
 
 if __name__ == '__main__':
-    loop = uvloop.new_event_loop()
-    app = create_app(loop)
+    asyncio.set_event_loop_policy(uvloop.EventLoopPolicy())
+    app = create_app()
 
     web.run_app(app)

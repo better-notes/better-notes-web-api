@@ -1,14 +1,11 @@
 import dataclasses
 
-import pytest
-
 from web_api.notes import interactors, repositories
 from web_api.notes.tests import factories
 from funcy import lmap
 
 
 class TestNoteInteractor:
-    @pytest.mark.asyncio
     async def test_add_get(self, motor_client, snapshot) -> None:
         # Given
         note_list = factories.NoteValueFactory.create_batch(3)
@@ -22,7 +19,6 @@ class TestNoteInteractor:
         # Then
         snapshot.assert_match(lmap(dataclasses.asdict, result))
 
-    @pytest.mark.asyncio
     async def test_update(self, motor_client, snapshot) -> None:
         # Given
         interactor = interactors.NoteInteractor(
