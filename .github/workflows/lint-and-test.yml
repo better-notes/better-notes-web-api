@@ -1,0 +1,43 @@
+name: Lint & Test
+
+on:
+  - push
+
+jobs:
+  lint:
+    name: Lint
+    runs-on: ubuntu-latest
+    steps:
+      - name: Get python
+        uses: actions/setup-python@v1.2.0
+
+      - name: Checkout code
+        uses: actions/checkout@v2
+
+      - name: Install poetry
+        run: pip install --upgrade pip && pip install poetry
+
+      - name: Install dependencies
+        run: poetry install
+
+      - name: Run linters
+        run: make lint
+
+  test:
+    name: Test
+    runs-on: ubuntu-latest
+    steps:
+      - name: Get python
+        uses: actions/setup-python@v1.2.0
+
+      - name: Checkout code
+        uses: actions/checkout@v2
+
+      - name: Install poetry
+        run: pip install --upgrade pip && pip install poetry
+
+      - name: Install dependencies
+        run: poetry install
+
+      - name: Run tests
+        run: make test
