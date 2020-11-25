@@ -38,3 +38,19 @@ class TestNoteInteractor:
         entity_list = await interactor.get()
         # Then
         assert entity_list[0].text == 'New text'
+
+    @pytest.mark.asyncio
+    async def test_delete(self, motor_client, snapshot) -> None:
+        # Given
+        interactor = interactors.NoteInteractor(
+            repositories.NoteRepository(client=motor_client)
+        )
+        # And
+        note_list = factories.NoteValueFactory.create_batch(3)
+        entity_list = await interactor.add(note_list)
+        # Ensure:
+        assert await interactor.get() != []
+        # When
+        await interactor.delete(entity_list)
+        # Then
+        assert await interactor.get() == []

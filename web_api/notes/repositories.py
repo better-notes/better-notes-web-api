@@ -106,3 +106,14 @@ class NoteRepository(AbstractNoteRepository):
                 {'_id': entity.id_.value}, {'$set': entity_data},
             )
         return entities
+
+    async def delete(
+        self, entities: List[entities.NoteEntity]
+    ) -> List[entities.NoteEntity]:
+        id_value_list = []
+        for entity in entities:
+            id_value_list.append(entity.id_.value)
+        await self.notes_collection.delete_many(
+            {'_id': {'$in': id_value_list}},
+        )
+        return entities

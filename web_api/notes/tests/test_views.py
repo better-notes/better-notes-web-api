@@ -87,3 +87,55 @@ class TestReadNoteView:
         # Then
         content = await res.content.read()
         snapshot.assert_match(commons.msgpack.loads(content))
+
+
+class TestDeleteNoteView:
+    @pytest.fixture  # type: ignore
+    def interactor(self, motor_client):
+        return interactors.NoteInteractor(
+            repositories.NoteRepository(client=motor_client)
+        )
+
+    @pytest.fixture  # type: ignore
+    async def note_data(self, interactor):
+        note_value_list = await interactor.add(
+            factories.NoteValueFactory.create_batch(3)
+        )
+
+        data = []
+        for note_value in note_value_list:
+            data.append(note_value.as_dict())
+
+        return commons.msgpack.dumps(data)
+
+    @pytest.fixture  # type: ignore
+    def view_cls(
+        self, motor_client: motor_asyncio.AsyncIOMotorClient,
+    ):
+        class DeleteNoteView(views.DeleteNoteView):
+            interactor: interactors.NoteInteractor = (
+                interactors.NoteInteractor(
+                    note_repository=repositories.NoteRepository(
+                        client=motor_client
+                    )
+                )
+            )
+
+        return DeleteNoteView
+
+    async def test_delete(
+        self, view_cls, note_data, snapshot, aiohttp_client, interactor
+    ) -> None:
+        # Given
+        app = web.Application()
+        app.router.add_view('/', view_cls)
+        client = await aiohttp_client(app)
+        # Ensure
+        assert await interactor.get() != []
+        # When
+        res = await client.delete('/', data=note_data)
+        # Then
+        assert await interactor.get() == []
+        # And
+        content = await res.content.read()
+        snapshot.assert_match(commons.msgpack.loads(content))

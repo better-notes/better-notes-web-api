@@ -61,3 +61,43 @@ snapshots['TestReadNoteView.test_post[pyloop] 1'] = [
         'text': 'Sample text',
     },
 ]
+
+
+snapshots['TestDeleteNoteView.test_delete[pyloop] 1'] = [
+    {
+        'created_at': GenericRepr(ANY),
+        'id_': {'value': GenericRepr(ANY)},
+        'tags': [
+            {
+                'created_at': GenericRepr(ANY),
+                'id_': {'value': GenericRepr(ANY)},
+                'name': 'tag #0',
+            }
+        ],
+        'text': 'Sample text',
+    },
+    {
+        'created_at': GenericRepr(ANY),
+        'id_': {'value': GenericRepr(ANY)},
+        'tags': [
+            {
+                'created_at': GenericRepr(ANY),
+                'id_': {'value': GenericRepr(ANY)},
+                'name': 'tag #1',
+            }
+        ],
+        'text': 'Sample text',
+    },
+    {
+        'created_at': GenericRepr(ANY),
+        'id_': {'value': GenericRepr(ANY)},
+        'tags': [
+            {
+                'created_at': GenericRepr(ANY),
+                'id_': {'value': GenericRepr(ANY)},
+                'name': 'tag #2',
+            }
+        ],
+        'text': 'Sample text',
+    },
+]
