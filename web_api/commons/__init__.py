@@ -1,9 +1,7 @@
-from web_api.commons import entities, responses, specs, values, views
+from web_api.commons import entities, specs, values
 
 __all__ = [
     'entities',
-    'responses',
     'specs',
     'values',
-    'views',
 ]

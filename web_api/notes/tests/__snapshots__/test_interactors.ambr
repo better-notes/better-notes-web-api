@@ -1,0 +1,28 @@
+# name: TestNoteInteractor.test_add_get
+  <class 'list'> [
+    <class 'dict'> {
+      'tags': <class 'list'> [
+        <class 'dict'> {
+          'name': 'tag #0',
+        },
+      ],
+      'text': 'Sample text',
+    },
+    <class 'dict'> {
+      'tags': <class 'list'> [
+        <class 'dict'> {
+          'name': 'tag #1',
+        },
+      ],
+      'text': 'Sample text',
+    },
+    <class 'dict'> {
+      'tags': <class 'list'> [
+        <class 'dict'> {
+          'name': 'tag #2',
+        },
+      ],
+      'text': 'Sample text',
+    },
+  ]
+---

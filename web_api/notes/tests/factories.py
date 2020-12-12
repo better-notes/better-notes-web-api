@@ -1,8 +1,9 @@
+import asyncio
+
 import factory
-
-from web_api.notes import values
-
-# Value
+from motor import motor_asyncio
+from web_api import settings
+from web_api.notes import interactors, repositories, values
 
 
 class TagValueFactory(factory.Factory):  # type: ignore
@@ -18,3 +19,35 @@ class NoteValueFactory(factory.Factory):  # type: ignore
 
     text = 'Sample text'
     tags = factory.List([factory.SubFactory(TagValueFactory)])
+
+    def __new__(cls, *args, **kwargs) -> values.NoteValue:
+        return super().__new__(*args, **kwargs)
+
+
+class SettingsFactory(factory.Factory):  # type: ignore
+    class Meta:
+        model = settings.Settings
+
+
+class MotorClientFactory(factory.Factory):  # type: ignore
+    class Meta:
+        model = motor_asyncio.AsyncIOMotorClient
+
+    host = 'localhost'
+    port = 27017
+    io_loop = factory.LazyFunction(asyncio.get_event_loop)
+
+
+class NoteRepositoryFactory(factory.Factory):  # type: ignore
+    class Meta:
+        model = repositories.NoteRepository
+
+    client = factory.SubFactory(MotorClientFactory)
+    settings = factory.SubFactory(SettingsFactory)
+
+
+class NoteInteractorFactory(factory.Factory):
+    class Meta:
+        model = interactors.NoteInteractor
+
+    note_repository = factory.SubFactory(NoteRepositoryFactory)

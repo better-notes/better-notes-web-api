@@ -1,18 +1,21 @@
-from aiohttp import web
+import uvicorn
+import uvloop
+from fastapi import FastAPI
+
 from web_api.notes import views
 
-import asyncio
-import uvloop
 
+def get_application() -> FastAPI:
+    uvloop.install()
 
-def create_app(loop: asyncio.AbstractEventLoop) -> web.Application:
-    app = web.Application()
-    app.add_routes(views.routes)
+    app = FastAPI()
+    app.include_router(views.router)
+
     return app
 
 
-if __name__ == '__main__':
-    loop = uvloop.new_event_loop()
-    app = create_app(loop)
+app = get_application()
 
-    web.run_app(app)
+
+if __name__ == "__main__":
+    uvicorn.run(app, host="0.0.0.0", port=8000)

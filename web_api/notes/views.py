@@ -1,54 +1,44 @@
-from aiohttp import web
+from web_api.notes.dependencies import get_note_interactor
 
-from web_api.notes import interactors, values, entities
-from web_api import commons
-
-routes = web.RouteTableDef()
-
-
-@routes.view('/api/v1/note/create/', name='create_note')
-class CreateNoteView(commons.views.StorableEntityView[values.NoteValue]):
-    interactor: interactors.NoteInteractor = interactors.NoteInteractor()
-    value_class = values.NoteValue
-
-    async def post(self) -> web.Response:
-        value_list = await self.get_values()
-        entity_list = await self.interactor.add(value_list)
-        entity_data = list(map(entities.NoteEntity.as_dict, entity_list))
-        return commons.responses.MSGPackResponse(data=entity_data)
+from fastapi.param_functions import Depends
+from web_api.notes import interactors
+from web_api.notes import values, entities
+from fastapi import APIRouter
 
 
-@routes.view('/api/v1/note/read/', name='read_note')
-class ReadNoteView(commons.views.StorableEntityView[values.NoteValue]):
-    interactor: interactors.NoteInteractor = interactors.NoteInteractor()
-    value_class = values.NoteValue
-
-    async def get(self) -> web.Response:
-        entity_list = await self.interactor.get()
-        entity_data = list(map(entities.NoteEntity.as_dict, entity_list))
-        return commons.responses.MSGPackResponse(data=entity_data)
+router = APIRouter()
 
 
-# TODO: Test.
-@routes.view('/api/v1/note/update/', name='update_note')
-class UpdateNoteView(commons.views.StorableEntityView[entities.NoteEntity]):
-    interactor: interactors.NoteInteractor = interactors.NoteInteractor()
-    value_class = entities.NoteEntity
-
-    async def put(self) -> web.Response:
-        value_list = await self.get_values()
-        entity_list = await self.interactor.update(value_list)
-        entity_data = list(map(entities.NoteEntity.as_dict, entity_list))
-        return commons.responses.MSGPackResponse(data=entity_data)
+@router.post('/api/v1/note/create/', response_model=list[entities.NoteEntity])
+async def create_notes(
+    note_values: list[values.NoteValue],
+    note_interactor: interactors.NoteInteractor = Depends(get_note_interactor),
+) -> list[entities.NoteEntity]:
+    return await note_interactor.add(note_values)
 
 
-@routes.view('/api/v1/note/delete/', name='delete_note')
-class DeleteNoteView(commons.views.StorableEntityView[entities.NoteEntity]):
-    interactor: interactors.NoteInteractor = interactors.NoteInteractor()
-    value_class = entities.NoteEntity
+@router.get('/api/v1/note/read/', response_model=list[entities.NoteEntity])
+async def read_notes(
+    limit: int,
+    offset: int,
+    note_interactor: interactors.NoteInteractor = Depends(get_note_interactor),
+) -> list[entities.NoteEntity]:
+    # TODO: add limit & offset
+    # TODO: add filtration by id or something
+    return await note_interactor.get()
 
-    async def delete(self) -> web.Response:
-        value_list = await self.get_values()
-        entity_list = await self.interactor.delete(value_list)
-        entity_data = list(map(entities.NoteEntity.as_dict, entity_list))
-        return commons.responses.MSGPackResponse(data=entity_data)
+
+@router.put('/api/v1/note/update/', response_model=list[entities.NoteEntity])
+async def update_notes(
+    note_entities: list[entities.NoteEntity],
+    note_interactor: interactors.NoteInteractor = Depends(get_note_interactor),
+) -> list[entities.NoteEntity]:
+    return await note_interactor.update(note_entities)
+
+
+@router.post('/api/v1/note/delete/', response_model=list[entities.NoteEntity])
+async def delete_notes(
+    note_entities: list[entities.NoteEntity],
+    note_interactor: interactors.NoteInteractor = Depends(get_note_interactor),
+) -> list[entities.NoteEntity]:
+    return await note_interactor.delete(note_entities)

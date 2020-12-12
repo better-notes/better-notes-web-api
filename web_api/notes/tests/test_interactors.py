@@ -1,55 +1,43 @@
-import dataclasses
-
-import pytest
-
-from web_api.notes import interactors, repositories
+from fastapi.encoders import jsonable_encoder
+from syrupy.filters import props
 from web_api.notes.tests import factories
-from funcy import lmap
 
 
 class TestNoteInteractor:
-    @pytest.mark.asyncio
-    async def test_add_get(self, motor_client, snapshot) -> None:
+    async def test_add_get(self, snapshot) -> None:
         # Given
         note_list = factories.NoteValueFactory.create_batch(3)
         # And
-        interactor = interactors.NoteInteractor(
-            repositories.NoteRepository(client=motor_client)
-        )
+        interactor = factories.NoteInteractorFactory()
         # When
         await interactor.add(note_list)
         result = await interactor.get()
         # Then
-        snapshot.assert_match(lmap(dataclasses.asdict, result))
-
-    @pytest.mark.asyncio
-    async def test_update(self, motor_client, snapshot) -> None:
-        # Given
-        interactor = interactors.NoteInteractor(
-            repositories.NoteRepository(client=motor_client)
+        assert jsonable_encoder(result) == snapshot(
+            exclude=props('id_', 'created_at')
         )
-        # And
+
+    async def test_update(self) -> None:
+        # Given
+        interactor = factories.NoteInteractorFactory()
         note_list = factories.NoteValueFactory.create_batch(3)
         entity_list = await interactor.add(note_list)
         # When
-        await interactor.update(
-            [dataclasses.replace(entity_list[0], text='New text')]
-        )
+        entity_list[0].text = 'New text'
+        await interactor.update(entity_list)
         entity_list = await interactor.get()
         # Then
         assert entity_list[0].text == 'New text'
 
-    @pytest.mark.asyncio
-    async def test_delete(self, motor_client, snapshot) -> None:
+    async def test_delete(self) -> None:
         # Given
-        interactor = interactors.NoteInteractor(
-            repositories.NoteRepository(client=motor_client)
-        )
+        interactor = factories.NoteInteractorFactory()
         # And
         note_list = factories.NoteValueFactory.create_batch(3)
         entity_list = await interactor.add(note_list)
         # Ensure:
         assert await interactor.get() != []
+
         # When
         await interactor.delete(entity_list)
         # Then
