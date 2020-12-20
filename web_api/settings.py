@@ -1,14 +1,16 @@
+from pydantic import BaseSettings
 import logging
-import os
+
 
 logging.basicConfig(
-    level=logging.DEBUG,
+    level=logging.INFO,
     format='[%(asctime)s - %(name)s - %(levelname)s]: %(message)s',
 )
 
 
-REPOSITORY_DEFAULT_PAGE_SIZE = 10
+class Settings(BaseSettings):
+    REPOSITORY_DEFAULT_PAGE_SIZE: int = 10
 
-MONGO_HOST = os.getenv('MONGO_HOST', 'localhost')
-MONGO_PORT = int(os.getenv('MONGO_PORT', '27017'))
-MONGO_DATABASE = os.getenv('MONGO_DATABASE', 'better_notes')
+    MONGO_HOST: str = 'localhost'
+    MONGO_PORT: int = 27017
+    MONGO_DATABASE: str = 'better_notes'

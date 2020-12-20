@@ -1,17 +1,10 @@
 import abc
-import dataclasses
-from typing import Any, Dict
+
+from pydantic import BaseModel
 
 
-class Value(abc.ABC):
+class Value(abc.ABC, BaseModel):
     """TODO:"""
 
-    def as_dict(self) -> Dict[str, Any]:
-        return dataclasses.asdict(self)
-
-
-@dataclasses.dataclass
-class ID(Value):
-    """TODO:"""
-
-    value: Any
+    class Config:
+        extra = 'forbid'

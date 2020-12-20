@@ -1,0 +1,48 @@
+# name: TestNoteAPI.test_create
+  <class 'list'> [
+    <class 'dict'> {
+      'tags': <class 'list'> [
+        <class 'dict'> {
+          'name': 'tag #0',
+        },
+      ],
+      'text': 'Sample text',
+    },
+  ]
+---
+# name: TestNoteAPI.test_delete
+  <class 'list'> [
+    <class 'dict'> {
+      'tags': <class 'list'> [
+        <class 'dict'> {
+          'name': 'tag #0',
+        },
+      ],
+      'text': 'Sample text',
+    },
+  ]
+---
+# name: TestNoteAPI.test_read
+  <class 'list'> [
+    <class 'dict'> {
+      'tags': <class 'list'> [
+        <class 'dict'> {
+          'name': 'tag #0',
+        },
+      ],
+      'text': 'Sample text',
+    },
+  ]
+---
+# name: TestNoteAPI.test_update
+  <class 'list'> [
+    <class 'dict'> {
+      'tags': <class 'list'> [
+        <class 'dict'> {
+          'name': 'tag #0',
+        },
+      ],
+      'text': 'Updated note text',
+    },
+  ]
+---
