@@ -20,9 +20,6 @@ class NoteValueFactory(factory.Factory):  # type: ignore
     text = 'Sample text'
     tags = factory.List([factory.SubFactory(TagValueFactory)])
 
-    def __new__(cls, *args, **kwargs) -> values.NoteValue:
-        return super().__new__(*args, **kwargs)
-
 
 class SettingsFactory(factory.Factory):  # type: ignore
     class Meta:
