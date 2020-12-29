@@ -1,6 +1,6 @@
 from fastapi import Depends
 from motor import motor_asyncio  # type: ignore
-from web_api.notes import interactors, repositories
+from web_api.notes import interactors, repositories, validators
 from web_api.settings import Settings
 
 
@@ -26,3 +26,9 @@ def get_note_interactor(
     ),
 ) -> interactors.NoteInteractor:
     return interactors.NoteInteractor(note_repository=note_repository)
+
+
+def get_paging_validator(
+    settings: Settings = Depends(lambda: Settings()),
+) -> validators.PagingValidator:
+    return validators.PagingValidator(settings=settings)

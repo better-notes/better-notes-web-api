@@ -8,6 +8,6 @@ class TestNoteRepository:
         note = factories.NoteValueFactory()
         repository = factories.NoteRepositoryFactory()
         # When
-        result = await repository.add(note)
+        result = await repository.add(note=note)
         # Then
         assert result.dict() == snapshot(exclude=props('id_', 'created_at'),)

@@ -42,7 +42,7 @@ class TestNoteAPI:
         assert data == snapshot(exclude=props('created_at', 'id_'))
 
     async def test_read(self, client, reverse_route, snapshot):
-        await self.interactor.add([factories.NoteValueFactory()])
+        await self.interactor.add(values=[factories.NoteValueFactory()])
 
         response = await client.get(
             reverse_route('read_notes') + '?limit=10&offset=0',
@@ -52,7 +52,9 @@ class TestNoteAPI:
         assert data == snapshot(exclude=props('created_at', 'id_'))
 
     async def test_update(self, client, reverse_route, snapshot):
-        notes = await self.interactor.add([factories.NoteValueFactory()])
+        notes = await self.interactor.add(
+            values=[factories.NoteValueFactory()]
+        )
         note = notes[0]
         note.text = 'Updated note text'
         response = await client.put(
@@ -63,7 +65,9 @@ class TestNoteAPI:
         assert data == snapshot(exclude=props('created_at', 'id_'))
 
     async def test_delete(self, client, reverse_route, snapshot):
-        notes = await self.interactor.add([factories.NoteValueFactory()])
+        notes = await self.interactor.add(
+            values=[factories.NoteValueFactory()]
+        )
 
         response = await client.post(
             reverse_route('delete_notes'), json=jsonable_encoder(notes),

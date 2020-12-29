@@ -32,7 +32,7 @@ class NoteRepository(AbstractNoteRepository):
         self.notes_collection = db['notes']
         self.tags_collection = db['tags']
 
-    async def add(self, note: values.NoteValue) -> entities.NoteEntity:
+    async def add(self, *, note: values.NoteValue) -> entities.NoteEntity:
         # TODO: add validation for already stored notes
         value_data = note.dict()
         created_at = datetime.now(timezone.utc)
@@ -47,21 +47,19 @@ class NoteRepository(AbstractNoteRepository):
         )
 
     async def get(
-        self, spec: commons.specs.Specification
+        self, *, spec: commons.specs.Specification, paging,
     ) -> list[entities.NoteEntity]:
         result = self.notes_collection.find(spec.get_query())
-        raw_note_list = await result.to_list(
-            self.settings.REPOSITORY_DEFAULT_PAGE_SIZE
-        )
+        raw_note_list = result.limit(paging.limit).skip(paging.offset)
         note_list = []
-        for note in raw_note_list:
+        async for note in raw_note_list:
             note_list.append(
                 entities.NoteEntity(id_=str(note.pop('_id')), **note),
             )
         return note_list
 
     async def update(
-        self, entities: list[entities.NoteEntity]
+        self, *, entities: list[entities.NoteEntity]
     ) -> list[entities.NoteEntity]:
         for entity in entities:
             entity_data = entity.dict(exclude={'id_'})
@@ -71,7 +69,7 @@ class NoteRepository(AbstractNoteRepository):
         return entities
 
     async def delete(
-        self, entities: list[entities.NoteEntity]
+        self, *, entities: list[entities.NoteEntity]
     ) -> list[entities.NoteEntity]:
         id_value_list = []
         for entity in entities:

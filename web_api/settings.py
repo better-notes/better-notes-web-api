@@ -9,8 +9,8 @@ logging.basicConfig(
 
 
 class Settings(BaseSettings):
-    REPOSITORY_DEFAULT_PAGE_SIZE: int = 10
-
     MONGO_HOST: str = 'localhost'
     MONGO_PORT: int = 27017
     MONGO_DATABASE: str = 'better_notes'
+
+    MAX_PAGING_LIMIT: int = 20
