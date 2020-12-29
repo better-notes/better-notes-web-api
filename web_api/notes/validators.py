@@ -6,7 +6,7 @@ from web_api.settings import Settings
 
 
 @dataclasses.dataclass
-class PagingTooWideException(HTTPException):
+class PagingTooWideError(HTTPException):
     settings: Settings
     status_code = status.HTTP_400_BAD_REQUEST
 
@@ -26,4 +26,4 @@ class PagingValidator:
 
     def validate(self, *, paging: values.Paging) -> None:
         if paging.limit > self.settings.MAX_PAGING_LIMIT:
-            raise PagingTooWideException(settings=self.settings)
+            raise PagingTooWideError(settings=self.settings)
