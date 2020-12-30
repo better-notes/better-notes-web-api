@@ -1,9 +1,5 @@
-from web_api.notes.validators import PagingValidator
 from web_api.commons.values import Paging
-from web_api.notes.dependencies import (
-    get_note_interactor,
-    get_paging_validator,
-)
+from web_api.notes.dependencies import get_note_interactor
 
 from fastapi.param_functions import Depends
 from web_api.notes import interactors
@@ -25,11 +21,9 @@ async def create_notes(
 @router.get('/api/v1/note/read/', response_model=list[entities.NoteEntity])
 async def read_notes(
     paging: Paging = Depends(),
-    paging_validator: PagingValidator = Depends(get_paging_validator),
     note_interactor: interactors.NoteInteractor = Depends(get_note_interactor),
 ) -> list[entities.NoteEntity]:
     # TODO: add filtration by id or something
-    paging_validator.validate(paging=paging)
     return await note_interactor.get(paging=paging)
 
 
