@@ -2,7 +2,7 @@ import asyncio
 
 import factory
 from motor import motor_asyncio
-from web_api import settings
+from web_api import commons, settings
 from web_api.notes import interactors, repositories, values
 
 
@@ -48,3 +48,11 @@ class NoteInteractorFactory(factory.Factory):
         model = interactors.NoteInteractor
 
     note_repository = factory.SubFactory(NoteRepositoryFactory)
+
+
+class PagingFactory(factory.Factory):
+    class Meta:
+        model = commons.values.Paging
+
+    limit = 10
+    offset = 0

@@ -10,8 +10,8 @@ class TestNoteInteractor:
         # And
         interactor = factories.NoteInteractorFactory()
         # When
-        await interactor.add(note_list)
-        result = await interactor.get()
+        await interactor.add(values=note_list)
+        result = await interactor.get(paging=factories.PagingFactory())
         # Then
         assert jsonable_encoder(result) == snapshot(
             exclude=props('id_', 'created_at')
@@ -21,11 +21,11 @@ class TestNoteInteractor:
         # Given
         interactor = factories.NoteInteractorFactory()
         note_list = factories.NoteValueFactory.create_batch(3)
-        entity_list = await interactor.add(note_list)
+        entity_list = await interactor.add(values=note_list)
         # When
         entity_list[0].text = 'New text'
-        await interactor.update(entity_list)
-        entity_list = await interactor.get()
+        await interactor.update(entities=entity_list)
+        entity_list = await interactor.get(paging=factories.PagingFactory())
         # Then
         assert entity_list[0].text == 'New text'
 
@@ -34,11 +34,11 @@ class TestNoteInteractor:
         interactor = factories.NoteInteractorFactory()
         # And
         note_list = factories.NoteValueFactory.create_batch(3)
-        entity_list = await interactor.add(note_list)
+        entity_list = await interactor.add(values=note_list)
         # Ensure:
-        assert await interactor.get() != []
+        assert await interactor.get(paging=factories.PagingFactory()) != []
 
         # When
-        await interactor.delete(entity_list)
+        await interactor.delete(entities=entity_list)
         # Then
-        assert await interactor.get() == []
+        assert await interactor.get(paging=factories.PagingFactory()) == []
