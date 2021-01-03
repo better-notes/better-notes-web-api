@@ -11,10 +11,7 @@ class NoteInteractor:
     async def add(
         self, *, values: list[values.NoteValue]
     ) -> list[entities.NoteEntity]:
-        added_value = []
-        for value in values:
-            added_value.append(await self.note_repository.add(note=value))
-        return added_value
+        return await self.note_repository.add(values=values)
 
     async def get(self, *, paging: Paging) -> list[entities.NoteEntity]:
         return await self.note_repository.get(

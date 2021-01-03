@@ -1,50 +1,46 @@
-import abc
 import dataclasses
 from datetime import datetime, timezone
-from typing import Any
 
+import bson
 from motor import motor_asyncio
+from pymongo.results import InsertOneResult
 from web_api import commons
+from web_api.commons.repositories import AbstractRepository
 from web_api.notes import entities, values
 from web_api.settings import Settings
-import bson
-
-
-class AbstractNoteRepository(abc.ABC):
-    @abc.abstractmethod
-    async def add(self, note: values.NoteValue) -> entities.NoteEntity:
-        raise NotImplementedError
-
-    @abc.abstractmethod
-    async def get(
-        self, spec: commons.specs.Specification
-    ) -> list[entities.NoteEntity]:
-        raise NotImplementedError
 
 
 @dataclasses.dataclass
-class NoteRepository(AbstractNoteRepository):
+class NoteRepository(AbstractRepository):
     client: motor_asyncio.AsyncIOMotorClient
     settings: Settings
 
     def __post_init__(self) -> None:
         db = self.client[self.settings.MONGO_DATABASE]
         self.notes_collection = db['notes']
-        self.tags_collection = db['tags']
 
-    async def add(self, *, note: values.NoteValue) -> entities.NoteEntity:
-        # TODO: add validation for already stored notes
-        value_data = note.dict()
-        created_at = datetime.now(timezone.utc)
+    async def add(
+        self, *, values: list[values.NoteValue]
+    ) -> list[entities.NoteEntity]:
+        inserted_entities = []
 
-        note_insert: Any = await self.notes_collection.insert_one(
-            {**value_data, 'created_at': created_at}
-        )
-        return entities.NoteEntity(
-            id_=str(note_insert.inserted_id),
-            created_at=created_at,
-            **value_data,
-        )
+        for value in values:
+            value_data = value.dict()
+            created_at = datetime.now(timezone.utc)
+            note_insert: InsertOneResult = (
+                await self.notes_collection.insert_one(
+                    {**value_data, 'created_at': created_at}
+                )
+            )
+            inserted_entities.append(
+                entities.NoteEntity(
+                    id_=str(note_insert.inserted_id),
+                    created_at=created_at,
+                    **value_data,
+                )
+            )
+
+        return inserted_entities
 
     async def get(
         self, *, spec: commons.specs.Specification, paging,

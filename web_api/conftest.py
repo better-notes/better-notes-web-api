@@ -4,6 +4,8 @@ import pytest
 from motor import motor_asyncio
 
 from web_api.settings import Settings
+from web_api.main import get_application
+from httpx import AsyncClient
 
 
 @pytest.fixture(autouse=True, scope='function')  # type: ignore
@@ -30,3 +32,22 @@ async def clear_mongo(motor_client):  # type: ignore
     motor_client.drop_database(settings.MONGO_DATABASE)
     yield
     motor_client.drop_database(settings.MONGO_DATABASE)
+
+
+@pytest.fixture
+def app():
+    return get_application()
+
+
+@pytest.fixture
+async def client(app):
+    async with AsyncClient(app=app, base_url='http://test') as client:
+        yield client
+
+
+@pytest.fixture
+def reverse_route(app):
+    def _reverse_route(route_name, *args, **kwargs):
+        return app.url_path_for(route_name, *args, **kwargs)
+
+    return _reverse_route
