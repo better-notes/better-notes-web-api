@@ -14,5 +14,3 @@ class Settings(BaseSettings):
     MONGO_DATABASE: str = 'better_notes'
 
     REDIS_ADDRESS: str = 'redis://localhost:6379'
-
-    MAX_PAGING_LIMIT: int = 20
