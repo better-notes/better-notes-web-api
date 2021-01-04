@@ -6,24 +6,24 @@ from passlib.hash import bcrypt  # type: ignore
 from web_api.accounts.repositories import UserRepository
 from web_api.accounts.usecases import AccountRegisterUseCase
 from web_api.accounts.values import (
-    AuthenticationCredentials,
-    RegistrationCredentials,
+    AuthenticationCredentialsValue,
+    RegistrationCredentialsValue,
 )
 from web_api.settings import Settings
 
 
-class RegistrationCredentialsFactory(factory.Factory):
+class RegistrationCredentialsValueFactory(factory.Factory):
     class Meta:
-        model = RegistrationCredentials
+        model = RegistrationCredentialsValue
 
     username = 'test_username'
     password1 = 'test_password'
     password2 = 'test_password'
 
 
-class AuthenticationCredentialsFactory(factory.Factory):
+class AuthenticationCredentialsValueFactory(factory.Factory):
     class Meta:
-        model = AuthenticationCredentials
+        model = AuthenticationCredentialsValue
 
     username = 'test_username'
     password = 'test_password'

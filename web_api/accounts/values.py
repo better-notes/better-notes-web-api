@@ -2,7 +2,7 @@ from pydantic import validator
 from web_api.commons import values
 
 
-class RegistrationCredentials(values.Value):
+class RegistrationCredentialsValue(values.Value):
     username: str
     password1: str
     password2: str
@@ -15,12 +15,12 @@ class RegistrationCredentials(values.Value):
         return password2
 
 
-class AuthenticationCredentials(values.Value):
+class AuthenticationCredentialsValue(values.Value):
     username: str
     password: str
 
 
-class AuthenticationToken(values.Value):
+class AuthenticationTokenValue(values.Value):
     value: str
 
 

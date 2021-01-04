@@ -45,7 +45,7 @@ class NoteRepository(AbstractRepository):
     async def get(
         self, *, spec: commons.specs.Specification, paging,
     ) -> list[entities.NoteEntity]:
-        result = self.notes_collection.find(spec.get_query())
+        result = self.notes_collection.find(spec)
         raw_note_list = result.limit(paging.limit).skip(paging.offset)
         note_list = []
         async for note in raw_note_list:

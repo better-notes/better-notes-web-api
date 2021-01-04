@@ -53,19 +53,19 @@ def get_user_session_repository(
     return repositories.UserSessionRepository(client=client)
 
 
-def get_user_session_id_generator() -> Callable[[], str]:
+def get_account_session_id_generator() -> Callable[[], str]:
     return secrets.token_hex
 
 
-def get_user_session_interactor(
+def get_account_session_interactor(
     user_session_repository: repositories.UserSessionRepository = Depends(
         get_user_session_repository
     ),
     user_session_id_generator: Callable[[], str] = Depends(
-        get_user_session_id_generator
+        get_account_session_id_generator
     ),
-) -> usecases.UserSessionInteractor:
-    return usecases.UserSessionInteractor(
+) -> usecases.AccountSessionInteractor:
+    return usecases.AccountSessionInteractor(
         user_session_repository=user_session_repository,
         generate_user_session_id=user_session_id_generator,
     )

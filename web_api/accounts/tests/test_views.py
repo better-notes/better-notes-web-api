@@ -1,18 +1,18 @@
 from syrupy.filters import props
 from web_api.accounts.tests.factories import (
     AccountRegisterUseCaseFactory,
-    AuthenticationCredentialsFactory,
-    RegistrationCredentialsFactory,
+    AuthenticationCredentialsValueFactory,
+    RegistrationCredentialsValueFactory,
 )
-from web_api.accounts.dependencies import get_user_session_id_generator
+from web_api.accounts.dependencies import get_account_session_id_generator
 
 
 async def test_register(client, app, reverse_route, snapshot):
     app.dependency_overrides[
-        get_user_session_id_generator
+        get_account_session_id_generator
     ] = lambda: lambda: 'session_id'
 
-    registration_credentials = RegistrationCredentialsFactory()
+    registration_credentials = RegistrationCredentialsValueFactory()
     response = await client.post(
         reverse_route('register'), json=registration_credentials.dict()
     )
@@ -22,11 +22,11 @@ async def test_register(client, app, reverse_route, snapshot):
 
 async def test_authenticate(client, app, reverse_route, snapshot):
     app.dependency_overrides[
-        get_user_session_id_generator
+        get_account_session_id_generator
     ] = lambda: lambda: 'session_id'
 
     password = 'test_password'
-    registration_credentials = RegistrationCredentialsFactory(
+    registration_credentials = RegistrationCredentialsValueFactory(
         password1=password, password2=password
     )
     account_register_use_case = AccountRegisterUseCaseFactory()
@@ -34,7 +34,7 @@ async def test_authenticate(client, app, reverse_route, snapshot):
         registration_credentials=registration_credentials
     )
 
-    authentication_credentials = AuthenticationCredentialsFactory(
+    authentication_credentials = AuthenticationCredentialsValueFactory(
         username=user_entity.username, password=password
     )
     response = await client.post(

@@ -1,5 +1,4 @@
 import dataclasses
-import secrets
 from typing import Callable
 
 from fastapi import HTTPException, status
@@ -16,8 +15,8 @@ class AccountRegisterUseCase:
     hasher: PasswordHash
 
     async def register(
-        self, *, registration_credentials: values.RegistrationCredentials
-    ) -> entities.UserEntity:
+        self, *, registration_credentials: values.RegistrationCredentialsValue
+    ) -> entities.AccountEntity:
         password_hash = self.hasher.hash(registration_credentials.password1)
 
         user_entity, *_ = await self.user_repository.add(
@@ -50,11 +49,13 @@ class AccountAuthenticateUseCase:
     hash_verifier: PasswordHash
 
     async def authenticate(
-        self, *, authentication_credentials: values.AuthenticationCredentials
-    ) -> entities.UserEntity:
+        self,
+        *,
+        authentication_credentials: values.AuthenticationCredentialsValue
+    ) -> entities.AccountEntity:
         user_entities = await self.user_repository.get(
             spec=GetUserByUsernameSpecification(
-                authentication_credentials.username
+                username=authentication_credentials.username
             ),
             paging=Paging(limit=1, offset=0),
         )
@@ -80,13 +81,13 @@ class SessionNotFoundError(HTTPException):
 
 
 @dataclasses.dataclass
-class UserSessionInteractor:
+class AccountSessionInteractor:
     user_session_repository: repositories.UserSessionRepository
     generate_user_session_id: Callable[[], str]
 
     async def get(
-        self, *, token: values.AuthenticationToken
-    ) -> entities.UserSessionEntity:
+        self, *, token: values.AuthenticationTokenValue
+    ) -> entities.AccountSessionEntity:
         user_sessions = await self.user_session_repository.get(values=[token])
         if len(user_sessions) == 0:
             raise SessionNotFoundError()
@@ -94,11 +95,11 @@ class UserSessionInteractor:
         return user_sessions[0]
 
     async def add(
-        self, *, user: entities.UserEntity
-    ) -> entities.UserSessionEntity:
+        self, *, user: entities.AccountEntity
+    ) -> entities.AccountSessionEntity:
         session_id = self.generate_user_session_id()
-        user_session = entities.UserSessionEntity(
-            token=values.AuthenticationToken(value=session_id), user=user
+        user_session = entities.AccountSessionEntity(
+            token=values.AuthenticationTokenValue(value=session_id), user=user
         )
         user_sessions = await self.user_session_repository.add(
             entities=[user_session]

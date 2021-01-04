@@ -22,7 +22,7 @@ class UserRepository(AbstractRepository):
 
     async def add(
         self, values: list[values.UserValue]
-    ) -> list[entities.UserEntity]:
+    ) -> list[entities.AccountEntity]:
         inserted_entities = []
 
         for value in values:
@@ -36,7 +36,7 @@ class UserRepository(AbstractRepository):
             )
 
             inserted_entities.append(
-                entities.UserEntity(
+                entities.AccountEntity(
                     id_=str(user_insert.inserted_id),
                     created_at=created_at,
                     **value_data,
@@ -47,19 +47,19 @@ class UserRepository(AbstractRepository):
 
     async def get(
         self, *, spec: commons.specs.Specification, paging,
-    ) -> list[entities.UserEntity]:
-        result = self.users_collection.find(spec.get_query())
+    ) -> list[entities.AccountEntity]:
+        result = self.users_collection.find(spec)
         raw_user_list = result.limit(paging.limit).skip(paging.offset)
         user_list = []
         async for user in raw_user_list:
             user_list.append(
-                entities.UserEntity(id_=str(user.pop('_id')), **user),
+                entities.AccountEntity(id_=str(user.pop('_id')), **user),
             )
         return user_list
 
     async def update(
-        self, *, entities: list[entities.UserEntity]
-    ) -> list[entities.UserEntity]:
+        self, *, entities: list[entities.AccountEntity]
+    ) -> list[entities.AccountEntity]:
         for entity in entities:
             entity_data = entity.dict(exclude={'id_'})
             await self.users_collection.update_one(
@@ -68,8 +68,8 @@ class UserRepository(AbstractRepository):
         return entities
 
     async def delete(
-        self, *, entities: list[entities.UserEntity]
-    ) -> list[entities.UserEntity]:
+        self, *, entities: list[entities.AccountEntity]
+    ) -> list[entities.AccountEntity]:
         id_value_list = []
         for entity in entities:
             id_value_list.append(bson.ObjectId(entity.id_))
@@ -85,8 +85,8 @@ class UserSessionRepository(AbstractRepository):
     client: Redis
 
     async def add(
-        self, *, entities: list[entities.UserSessionEntity]
-    ) -> list[entities.UserSessionEntity]:
+        self, *, entities: list[entities.AccountSessionEntity]
+    ) -> list[entities.AccountSessionEntity]:
         for entity in entities:
             await self.client.set(
                 entity.token.value,
@@ -97,12 +97,12 @@ class UserSessionRepository(AbstractRepository):
         return entities
 
     async def get(
-        self, *, values: list[values.AuthenticationToken]
-    ) -> list[entities.UserSessionEntity]:
+        self, *, values: list[values.AuthenticationTokenValue]
+    ) -> list[entities.AccountSessionEntity]:
         result = []
 
         for value in values:
             entity_json = await self.client.get(value.value)
-            result.append(entities.UserSessionEntity.parse_raw(entity_json))
+            result.append(entities.AccountSessionEntity.parse_raw(entity_json))
 
         return result
