@@ -21,7 +21,9 @@ class TestNoteAPI:
         assert note_dict_list == snapshot(exclude=props('created_at', 'id_'))
 
     async def test_read(self, client, reverse_route, snapshot):
-        await self.interactor.add(values=[factories.NoteValueFactory()])
+        await self.interactor.add(
+            note_value_list=[factories.NoteValueFactory()],
+        )
 
         response = await client.get(
             '{0}{1}'.format(reverse_route('read_notes'), '?limit=10&offset=0'),
@@ -32,7 +34,7 @@ class TestNoteAPI:
 
     async def test_update(self, client, reverse_route, snapshot):
         notes = await self.interactor.add(
-            values=[factories.NoteValueFactory()],
+            note_value_list=[factories.NoteValueFactory()],
         )
         note = notes[0]
         note.text = 'Updated note text'
@@ -45,7 +47,7 @@ class TestNoteAPI:
 
     async def test_delete(self, client, reverse_route, snapshot):
         notes = await self.interactor.add(
-            values=[factories.NoteValueFactory()],
+            note_value_list=[factories.NoteValueFactory()],
         )
 
         response = await client.post(
