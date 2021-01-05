@@ -1,5 +1,6 @@
 from fastapi.encoders import jsonable_encoder
 from syrupy.filters import props
+
 from web_api.notes.tests import factories
 
 
@@ -9,8 +10,8 @@ class TestNoteRepository:
         note = factories.NoteValueFactory()
         repository = factories.NoteRepositoryFactory()
         # When
-        result = await repository.add(values=[note])
+        note_list = await repository.add(values=[note])
         # Then
-        assert jsonable_encoder(result) == snapshot(
+        assert jsonable_encoder(note_list) == snapshot(
             exclude=props('id_', 'created_at'),
         )

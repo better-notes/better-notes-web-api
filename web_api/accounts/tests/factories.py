@@ -3,6 +3,7 @@ import asyncio
 import factory
 from motor import motor_asyncio
 from passlib.hash import bcrypt  # type: ignore
+
 from web_api.accounts.repositories import UserRepository
 from web_api.accounts.usecases import AccountRegisterUseCase
 from web_api.accounts.values import (

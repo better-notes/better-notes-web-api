@@ -3,6 +3,7 @@ from typing import Callable
 
 from fastapi import HTTPException, status
 from passlib.ifc import PasswordHash
+
 from web_api.accounts import entities, repositories, values
 from web_api.accounts.specs import UsernameSpecification
 from web_api.commons.values import Paging

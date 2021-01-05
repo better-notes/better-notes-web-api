@@ -1,20 +1,28 @@
 from fastapi import Depends
 from motor import motor_asyncio
-from web_api.commons.dependencies import get_mongo_client
+
+from web_api.commons.dependencies import (
+    MONGO_CLIENT_DEPENDENCY,
+    SETTINGS_DEPENDENCY,
+)
 from web_api.notes import interactors, repositories
 from web_api.settings import Settings
 
 
-def get_note_repository(
-    client: motor_asyncio.AsyncIOMotorClient = Depends(get_mongo_client),
-    settings: Settings = Depends(lambda: Settings()),
+def _get_note_repository(
+    client: motor_asyncio.AsyncIOMotorClient = MONGO_CLIENT_DEPENDENCY,
+    settings: Settings = SETTINGS_DEPENDENCY,
 ) -> repositories.NoteRepository:
     return repositories.NoteRepository(client=client, settings=settings)
 
 
-def get_note_interactor(
-    note_repository: repositories.NoteRepository = Depends(
-        get_note_repository
-    ),
+NOTE_REPOSITORY_DEPENDENCY = Depends(_get_note_repository)
+
+
+def _get_note_interactor(
+    note_repository: repositories.NoteRepository = NOTE_REPOSITORY_DEPENDENCY,
 ) -> interactors.NoteInteractor:
     return interactors.NoteInteractor(note_repository=note_repository)
+
+
+NOTE_INTERACTOR_DEPENDENCY = Depends(_get_note_interactor)

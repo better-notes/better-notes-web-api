@@ -1,18 +1,23 @@
 import secrets
 from typing import Callable
+
 from aioredis import create_redis_pool
 from aioredis.commands import Redis
 from fastapi import Depends
 from motor import motor_asyncio  # type: ignore
 from passlib.hash import bcrypt  # type: ignore
+
 from web_api.accounts import repositories, usecases
-from web_api.commons.dependencies import get_mongo_client
+from web_api.commons.dependencies import (
+    MONGO_CLIENT_DEPENDENCY,
+    SETTINGS_DEPENDENCY,
+)
 from web_api.settings import Settings
 
 
 def get_user_repository(
-    client: motor_asyncio.AsyncIOMotorClient = Depends(get_mongo_client),
-    settings: Settings = Depends(lambda: Settings()),
+    client: motor_asyncio.AsyncIOMotorClient = MONGO_CLIENT_DEPENDENCY,
+    settings: Settings = SETTINGS_DEPENDENCY,
 ) -> repositories.UserRepository:
     return repositories.UserRepository(client=client, settings=settings)
 
@@ -43,7 +48,7 @@ def get_account_authenticate_use_case(
     )
 
 
-async def get_redis(settings: Settings = Depends(lambda: Settings())) -> Redis:
+async def get_redis(settings: Settings = SETTINGS_DEPENDENCY) -> Redis:
     return await create_redis_pool(settings.REDIS_ADDRESS)
 
 
