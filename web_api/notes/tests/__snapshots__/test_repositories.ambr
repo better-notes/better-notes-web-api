@@ -1,10 +1,12 @@
 # name: TestNoteRepository.test_add
-  <class 'dict'> {
-    'tags': <class 'list'> [
-      <class 'dict'> {
-        'name': 'tag #0',
-      },
-    ],
-    'text': 'Sample text',
-  }
+  <class 'list'> [
+    <class 'dict'> {
+      'tags': <class 'list'> [
+        <class 'dict'> {
+          'name': 'tag #0',
+        },
+      ],
+      'text': 'Sample text',
+    },
+  ]
 ---

@@ -13,4 +13,4 @@ class Settings(BaseSettings):
     MONGO_PORT: int = 27017
     MONGO_DATABASE: str = 'better_notes'
 
-    MAX_PAGING_LIMIT: int = 20
+    REDIS_ADDRESS: str = 'redis://localhost:6379'

@@ -1,10 +1,5 @@
-import abc
-from typing import Any
+from typing import TypedDict
 
 
-class Specification(abc.ABC):
+class Specification(TypedDict):
     """TODO:"""
-
-    @abc.abstractmethod
-    def get_query(self) -> Any:
-        raise NotImplementedError

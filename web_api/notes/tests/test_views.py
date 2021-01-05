@@ -7,25 +7,6 @@ from web_api.notes import interactors
 from web_api.notes.tests import factories
 
 
-@pytest.fixture
-def app():
-    return get_application()
-
-
-@pytest.fixture
-async def client(app):
-    async with AsyncClient(app=app, base_url='http://test') as client:
-        yield client
-
-
-@pytest.fixture
-def reverse_route(app):
-    def _reverse_route(route_name, *args, **kwargs):
-        return app.url_path_for(route_name, *args, **kwargs)
-
-    return _reverse_route
-
-
 class TestNoteAPI:
     @property
     def interactor(self) -> interactors.NoteInteractor:

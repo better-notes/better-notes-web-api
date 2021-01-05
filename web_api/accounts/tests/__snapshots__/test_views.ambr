@@ -1,0 +1,10 @@
+# name: test_authenticate
+  <class 'dict'> {
+    'value': 'session_id',
+  }
+---
+# name: test_register
+  <class 'dict'> {
+    'value': 'session_id',
+  }
+---

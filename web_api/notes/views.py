@@ -10,7 +10,7 @@ from fastapi import APIRouter
 router = APIRouter()
 
 
-@router.post('/api/v1/note/create/', response_model=list[entities.NoteEntity])
+@router.post('/note/create/', response_model=list[entities.NoteEntity])
 async def create_notes(
     note_values: list[values.NoteValue],
     note_interactor: interactors.NoteInteractor = Depends(get_note_interactor),
@@ -18,7 +18,7 @@ async def create_notes(
     return await note_interactor.add(values=note_values)
 
 
-@router.get('/api/v1/note/read/', response_model=list[entities.NoteEntity])
+@router.get('/note/read/', response_model=list[entities.NoteEntity])
 async def read_notes(
     paging: Paging = Depends(),
     note_interactor: interactors.NoteInteractor = Depends(get_note_interactor),
@@ -27,7 +27,7 @@ async def read_notes(
     return await note_interactor.get(paging=paging)
 
 
-@router.put('/api/v1/note/update/', response_model=list[entities.NoteEntity])
+@router.put('/note/update/', response_model=list[entities.NoteEntity])
 async def update_notes(
     note_entities: list[entities.NoteEntity],
     note_interactor: interactors.NoteInteractor = Depends(get_note_interactor),
@@ -35,7 +35,7 @@ async def update_notes(
     return await note_interactor.update(entities=note_entities)
 
 
-@router.post('/api/v1/note/delete/', response_model=list[entities.NoteEntity])
+@router.post('/note/delete/', response_model=list[entities.NoteEntity])
 async def delete_notes(
     note_entities: list[entities.NoteEntity],
     note_interactor: interactors.NoteInteractor = Depends(get_note_interactor),
