@@ -27,7 +27,7 @@ class TestNoteInteractor:
         entity_list = await interactor.add(note_value_list=note_list)
         # When
         entity_list[0].text = 'New text'
-        await interactor.update(entities=entity_list)
+        await interactor.update(note_entity_list=entity_list)
         entity_list = await interactor.get(paging=factories.PagingFactory())
         # Then
         assert entity_list[0].text == 'New text'
@@ -42,6 +42,6 @@ class TestNoteInteractor:
         assert await interactor.get(paging=factories.PagingFactory()) != []
 
         # When
-        await interactor.delete(entities=entity_list)
+        await interactor.delete(note_entity_list=entity_list)
         # Then
         assert await interactor.get(paging=factories.PagingFactory()) == []

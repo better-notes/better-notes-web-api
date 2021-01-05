@@ -10,7 +10,7 @@ class TestNoteRepository:
         note = factories.NoteValueFactory()
         repository = factories.NoteRepositoryFactory()
         # When
-        note_list = await repository.add(values=[note])
+        note_list = await repository.add(note_value_list=[note])
         # Then
         assert jsonable_encoder(note_list) == snapshot(
             exclude=props('id_', 'created_at'),

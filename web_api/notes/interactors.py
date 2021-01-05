@@ -38,5 +38,5 @@ class NoteInteractor:
     ) -> list[NoteEntity]:
         """Delete given notes using id. Return delete notes."""
         return await self.note_repository.delete(
-            note_entity_lists=note_entity_list,
+            note_entity_list=note_entity_list,
         )

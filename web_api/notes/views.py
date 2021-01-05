@@ -33,7 +33,7 @@ async def update_notes(
     note_interactor: interactors.NoteInteractor = NOTE_INTERACTOR_DEPENDENCY,
 ) -> list[entities.NoteEntity]:
     """Update notes using id. Return updated notes."""
-    return await note_interactor.update(entities=note_entities)
+    return await note_interactor.update(note_entity_list=note_entities)
 
 
 @router.post('/note/delete/', response_model=list[entities.NoteEntity])
@@ -42,4 +42,4 @@ async def delete_notes(
     note_interactor: interactors.NoteInteractor = NOTE_INTERACTOR_DEPENDENCY,
 ) -> list[entities.NoteEntity]:
     """Delete notes using id. Return deleted notes."""
-    return await note_interactor.delete(entities=note_entities)
+    return await note_interactor.delete(note_entity_list=note_entities)
