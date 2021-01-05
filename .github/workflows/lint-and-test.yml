@@ -1,0 +1,55 @@
+name: Lint & Test
+
+on:
+  - push
+
+jobs:
+  notify_telegram:
+    name: Notify Telegram
+    runs-on: ubuntu-latest
+    steps:
+      - name: "Notify telegram"
+        uses: yanzay/notify-telegram@v0.1.0
+        if: always()
+        with:
+          chat: ${{ secrets.TELEGRAM_BOT_CHAT }}
+          token: ${{ secrets.TELEGRAM_BOT_TOKEN }}
+          status: ${{ job.status }}
+
+  lint:
+    name: Lint
+    runs-on: ubuntu-latest
+    steps:
+      - name: Get python
+        uses: actions/setup-python@v1.2.0
+
+      - name: Checkout code
+        uses: actions/checkout@v2
+
+      - name: Install poetry
+        run: pip install --upgrade pip && pip install poetry
+
+      - name: Install dependencies
+        run: poetry install
+
+      - name: Run linters
+        run: make lint
+
+  test:
+    name: Test
+    runs-on: ubuntu-latest
+    steps:
+      - name: Get python
+        uses: actions/setup-python@v1.2.0
+
+      - name: Checkout code
+        uses: actions/checkout@v2
+
+      - name: Install poetry
+        run: pip install --upgrade pip && pip install poetry
+
+      - name: Install dependencies
+        run: poetry install
+
+      - name: Run tests
+        run: make test
