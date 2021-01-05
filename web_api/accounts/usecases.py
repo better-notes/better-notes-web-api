@@ -4,7 +4,7 @@ from typing import Callable
 from fastapi import HTTPException, status
 from passlib.ifc import PasswordHash
 from web_api.accounts import entities, repositories, values
-from web_api.accounts.specs import GetUserByUsernameSpecification
+from web_api.accounts.specs import UsernameSpecification
 from web_api.commons.values import Paging
 
 
@@ -54,7 +54,7 @@ class AccountAuthenticateUseCase:
         authentication_credentials: values.AuthenticationCredentialsValue
     ) -> entities.AccountEntity:
         user_entities = await self.user_repository.get(
-            spec=GetUserByUsernameSpecification(
+            spec=UsernameSpecification(
                 username=authentication_credentials.username
             ),
             paging=Paging(limit=1, offset=0),

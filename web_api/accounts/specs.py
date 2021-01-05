@@ -1,5 +1,5 @@
 from web_api.commons.specs import Specification
 
 
-class GetUserByUsernameSpecification(Specification):
+class UsernameSpecification(Specification):
     username: str
