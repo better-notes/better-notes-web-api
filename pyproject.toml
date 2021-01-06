@@ -28,13 +28,72 @@ syrupy = "^1.0.0"
 httpx = "^0.16.1"
 pytest-aiohttp = "^0.3.0"
 pytest-asyncio = "^0.14.0"
+wemake-python-styleguide = "^0.14.0"
+flake8-functions = "^0.0.4"
+isort = "^4.3.21"
+pytest-cov = "^2.10.1"
+flakehell = "^0.7.1"
 
 [tool.black]
 line-length = 79
 py38 = true
 skip-string-normalization = true
-exclude = '(.git)'
+exclude = '(\.git|\.venv)'
+include_trailing_comma = true
 
 [build-system]
 requires = ["poetry>=0.12"]
 build-backend = "poetry.masonry.api"
+
+[tool.isort]
+multi_line_output = 3
+include_trailing_comma = true
+
+[tool.flakehell]
+baseline = ".flakehell_baseline"
+exclude = [".git","__pycache__",".venv"]
+format = "grouped"
+show_source = true
+statistics = false
+doctests = true
+enable_extensions = "G"
+accept_encodings = "utf-8"
+max_complexity = 6
+max_line_length = 79
+
+# Global ignores are copied from we-make-python recommended flakehell config.
+# https://github.com/wemake-services/wemake-python-styleguide/blob/master/styles/flakehell.toml
+[tool.flakehell.plugins]
+"flake8-*" = [
+    "+*", "-D100", "-D104", "-D401", "-RST303", "-RST304", "-DAR103", "-DAR203",
+    "-DAR101",  # Missing parameter(s) in Docstring: - {0} | We use mypy.
+    "-DAR201",  # Missing "Returns" in Docstring: - {0} | We use mypy.
+]
+mccabe = ["+*"]
+nitpick = ["+*"]
+"pep8-naming" = ["+*"]
+pycodestyle = ["+*", "-W504"]
+pyflakes = ["+*"]
+"wemake-python-styleguide" = [
+    "+*",
+    "-WPS306",  # Found class without a base class. | 🪨📃✂️--✅📃-❌🪨
+    "+WPS305",  # Found `f` string. | 🪨📃✂️--❌📃-❌📃--✅✂️-❌📃
+]
+
+[tool.flakehell.exceptions."**/tests/**"]
+"wemake-python-styleguide" = [
+    "-WPS306",  # Found class without a base class: {0}
+    "-WPS226",  # Found string constant over-use: {0}
+    "-WPS520",  # Found compare with falsy constant
+]
+"flake8-*" = [
+    "-S101",  # Use of assert detected.
+    "-D101",  # Missing docstring in public class
+    "-D102",  # Missing docstring in public method
+    "-D106",  # Missing docstring in public nested class
+]
+
+[tool.coverage.run]
+omit = ["*/tests/*"]
+[tool.coverage.report]
+fail_under = 75

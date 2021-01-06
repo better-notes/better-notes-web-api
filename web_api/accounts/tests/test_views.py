@@ -1,10 +1,11 @@
 from syrupy.filters import props
+
+from web_api.accounts.dependencies import get_account_session_id_generator
 from web_api.accounts.tests.factories import (
     AccountRegisterUseCaseFactory,
     AuthenticationCredentialsValueFactory,
     RegistrationCredentialsValueFactory,
 )
-from web_api.accounts.dependencies import get_account_session_id_generator
 
 
 async def test_register(client, app, reverse_route, snapshot):

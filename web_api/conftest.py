@@ -1,11 +1,11 @@
 import factory
-from motor.frameworks import asyncio
 import pytest
-from motor import motor_asyncio
-
-from web_api.settings import Settings
-from web_api.main import get_application
 from httpx import AsyncClient
+from motor import motor_asyncio
+from motor.frameworks import asyncio
+
+from web_api.main import get_application
+from web_api.settings import Settings
 
 
 @pytest.fixture(autouse=True, scope='function')  # type: ignore

@@ -1,5 +1,6 @@
 from fastapi import APIRouter
 from fastapi.param_functions import Depends
+
 from web_api.accounts.dependencies import (
     get_account_authenticate_use_case,
     get_account_register_use_case,

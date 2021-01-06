@@ -2,6 +2,7 @@ import asyncio
 
 import factory
 from motor import motor_asyncio
+
 from web_api import commons, settings
 from web_api.notes import interactors, repositories, values
 

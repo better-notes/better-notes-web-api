@@ -1,11 +1,11 @@
-from fastapi.routing import APIRouter
 import uvicorn
 import uvloop
 from fastapi import FastAPI
+from fastapi.routing import APIRouter
 from starlette.middleware.cors import CORSMiddleware
 
-from web_api.notes import views as notes_views
 from web_api.accounts import views as accounts_views
+from web_api.notes import views as notes_views
 
 
 def include_api_v1_router(

@@ -1,5 +1,5 @@
-from web_api import commons
+from web_api.commons.specs import Specification
 
 
-class ListNoteSpecification(commons.specs.Specification):
-    pass
+class NoteSpecification(Specification):
+    """Return all notes."""
