@@ -3,7 +3,7 @@ import abc
 from pydantic import BaseModel, validator
 
 
-class Value(abc.ABC, BaseModel):
+class Value(abc.ABC, BaseModel):  # noqa: WPS110
     """Base class for all value objects."""
 
     class Config:  # noqa WPS431

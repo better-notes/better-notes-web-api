@@ -1,13 +1,14 @@
 import dataclasses
 from datetime import datetime, timezone
 
-import bson
 from motor import motor_asyncio
 from pymongo.results import InsertOneResult
 
-from web_api import commons
+from web_api.accounts.entities import AccountEntity
 from web_api.commons.repositories import AbstractRepository
+from web_api.commons.values import Paging
 from web_api.notes import entities, values
+from web_api.notes.specs import NoteSpecification
 from web_api.settings import Settings
 
 
@@ -24,7 +25,10 @@ class NoteRepository(AbstractRepository):
         self.notes_collection = db['notes']
 
     async def add(
-        self, *, note_value_list: list[values.NoteValue],
+        self,
+        *,
+        account_entity: AccountEntity,
+        note_value_list: list[values.NoteValue],
     ) -> list[entities.NoteEntity]:
         """Add notes into db. Return added notes."""
         inserted_entities = []
@@ -34,24 +38,29 @@ class NoteRepository(AbstractRepository):
             created_at = datetime.now(timezone.utc)
             note_insert: InsertOneResult = (
                 await self.notes_collection.insert_one(
-                    {**note_value_dict, 'created_at': created_at},
+                    {
+                        'account': account_entity.dict(),
+                        **note_value_dict,
+                        'created_at': created_at,
+                    },
                 )
             )
             inserted_entities.append(
                 entities.NoteEntity(
                     id_=str(note_insert.inserted_id),
-                    created_at=created_at,
+                    account=account_entity,
                     **note_value_dict,
+                    created_at=created_at,
                 ),
             )
 
         return inserted_entities
 
     async def get(
-        self, *, spec: commons.specs.Specification, paging,
+        self, *, spec: NoteSpecification, paging: Paging,
     ) -> list[entities.NoteEntity]:
         """Return notes for given spec."""
-        cursor = self.notes_collection.find(spec)
+        cursor = self.notes_collection.find(spec.get_query())
 
         raw_note_list = cursor.limit(paging.limit).skip(paging.offset)
         note_list = []
@@ -62,26 +71,19 @@ class NoteRepository(AbstractRepository):
         return note_list
 
     async def update(
-        self, *, note_entity_list: list[entities.NoteEntity],
-    ) -> list[entities.NoteEntity]:
-        """Update notes using id. Return updated notes."""
-        for note_entity in note_entity_list:
-            note_entity_dict = note_entity.dict(exclude={'id_'})
-            await self.notes_collection.update_one(
-                {'_id': bson.ObjectId(note_entity.id_)},
-                {'$set': note_entity_dict},
-            )
-        return note_entity_list
+        self, *, spec: NoteSpecification, note_value: values.NoteValue,
+    ) -> int:
+        """Update notes using spec. Return updated amount."""
+        note_value_dict = note_value.dict()
 
-    async def delete(
-        self, *, note_entity_list: list[entities.NoteEntity],
-    ) -> list[entities.NoteEntity]:
-        """Delete notes using id. Return delete notes."""
-        id_value_list = []
-        for note_entity in note_entity_list:
-            id_value_list.append(bson.ObjectId(note_entity.id_))
-
-        await self.notes_collection.delete_many(
-            {'_id': {'$in': id_value_list}},
+        update_result = await self.notes_collection.update_one(
+            spec.get_query(), {'$set': note_value_dict},
         )
-        return note_entity_list
+        return update_result.modified_count
+
+    async def delete(self, *, spec: NoteSpecification) -> int:
+        """Delete notes using spec. Return deleted amount."""
+        delete_result = await self.notes_collection.delete_many(
+            spec.get_query(),
+        )
+        return delete_result.deleted_count

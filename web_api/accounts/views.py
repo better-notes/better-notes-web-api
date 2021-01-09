@@ -1,10 +1,9 @@
 from fastapi import APIRouter
-from fastapi.param_functions import Depends
 
 from web_api.accounts.dependencies import (
-    get_account_authenticate_use_case,
-    get_account_register_use_case,
-    get_account_session_interactor,
+    ACCOUNT_AUTHENTICATE_USE_CASE_DEPENDENCY,
+    ACCOUNT_REGISTER_USE_CASE_DEPENDENCY,
+    ACCOUNT_SESSION_INTERACTOR_DEPENDENCY,
 )
 from web_api.accounts.usecases import (
     AccountAuthenticateUseCase,
@@ -25,17 +24,19 @@ router = APIRouter()
 )
 async def register(
     registration_credentials: RegistrationCredentialsValue,
-    account_register_use_case: AccountRegisterUseCase = Depends(
-        get_account_register_use_case
+    account_register_use_case: AccountRegisterUseCase = (
+        ACCOUNT_REGISTER_USE_CASE_DEPENDENCY
     ),
-    user_session_interactor: AccountSessionInteractor = Depends(
-        get_account_session_interactor
+    user_session_interactor: AccountSessionInteractor = (
+        ACCOUNT_SESSION_INTERACTOR_DEPENDENCY
     ),
 ) -> AuthenticationTokenValue:
-    user = await account_register_use_case.register(
-        registration_credentials=registration_credentials
+    account_entity = await account_register_use_case.register(
+        registration_credentials=registration_credentials,
     )
-    user_session = await user_session_interactor.add(user=user)
+    user_session = await user_session_interactor.add(
+        account_entity=account_entity,
+    )
 
     return user_session.token
 
@@ -45,16 +46,16 @@ async def register(
 )
 async def authenticate(
     authentication_credentials: AuthenticationCredentialsValue,
-    account_authenticate_use_case: AccountAuthenticateUseCase = Depends(
-        get_account_authenticate_use_case
+    account_authenticate_use_case: AccountAuthenticateUseCase = (
+        ACCOUNT_AUTHENTICATE_USE_CASE_DEPENDENCY
     ),
-    user_session_interactor: AccountSessionInteractor = Depends(
-        get_account_session_interactor
+    user_session_interactor: AccountSessionInteractor = (
+        ACCOUNT_SESSION_INTERACTOR_DEPENDENCY
     ),
 ) -> AuthenticationTokenValue:
     user = await account_authenticate_use_case.authenticate(
-        authentication_credentials=authentication_credentials
+        authentication_credentials=authentication_credentials,
     )
-    user_session = await user_session_interactor.add(user=user)
+    user_session = await user_session_interactor.add(account_entity=user)
 
     return user_session.token

@@ -1,6 +1,9 @@
 # name: TestNoteAPI.test_create
   <class 'list'> [
     <class 'dict'> {
+      'account': <class 'dict'> {
+        'username': 'test_username',
+      },
       'tags': <class 'list'> [
         <class 'dict'> {
           'name': 'tag #0',
@@ -13,6 +16,9 @@
 # name: TestNoteAPI.test_delete
   <class 'list'> [
     <class 'dict'> {
+      'account': <class 'dict'> {
+        'username': 'test_username',
+      },
       'tags': <class 'list'> [
         <class 'dict'> {
           'name': 'tag #0',
@@ -25,6 +31,9 @@
 # name: TestNoteAPI.test_read
   <class 'list'> [
     <class 'dict'> {
+      'account': <class 'dict'> {
+        'username': 'test_username',
+      },
       'tags': <class 'list'> [
         <class 'dict'> {
           'name': 'tag #0',
@@ -37,6 +46,9 @@
 # name: TestNoteAPI.test_update
   <class 'list'> [
     <class 'dict'> {
+      'account': <class 'dict'> {
+        'username': 'test_username',
+      },
       'tags': <class 'list'> [
         <class 'dict'> {
           'name': 'tag #0',

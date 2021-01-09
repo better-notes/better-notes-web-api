@@ -1,5 +1,8 @@
 import dataclasses
 
+import bson
+
+from web_api.accounts.entities import AccountEntity
 from web_api.commons.values import Paging
 from web_api.notes import specs
 from web_api.notes.entities import NoteEntity
@@ -14,29 +17,63 @@ class NoteInteractor:
     note_repository: NoteRepository
 
     async def add(
-        self, *, note_value_list: list[NoteValue],
+        self,
+        *,
+        account_entity: AccountEntity,
+        note_value_list: list[NoteValue],
     ) -> list[NoteEntity]:
         """Add notes into db. Return added notes."""
-        return await self.note_repository.add(note_value_list=note_value_list)
+        return await self.note_repository.add(
+            account_entity=account_entity, note_value_list=note_value_list,
+        )
 
-    async def get(self, *, paging: Paging) -> list[NoteEntity]:
+    async def get(
+        self, *, account_entity: AccountEntity, paging: Paging,
+    ) -> list[NoteEntity]:
         """Return all notes."""
         return await self.note_repository.get(
-            spec=specs.NoteSpecification(), paging=paging,
+            spec=specs.GetNoteSpecification(username=account_entity.username),
+            paging=paging,
         )
 
     async def update(
-        self, *, note_entity_list: list[NoteEntity],
+        self,
+        *,
+        account_entity: AccountEntity,
+        note_entity_list: list[NoteEntity],
     ) -> list[NoteEntity]:
         """Update given notes using id. Return updated notes."""
-        return await self.note_repository.update(
-            note_entity_list=note_entity_list,
-        )
+        for note_entity in note_entity_list:
+            await self.note_repository.update(
+                spec=specs.UpdateNoteSpecification(
+                    username=account_entity.username,
+                    _id=bson.ObjectId(note_entity.id_),
+                ),
+                note_value=NoteValue(
+                    **note_entity.dict(
+                        exclude={'id_', 'created_at', 'account'},
+                    ),
+                ),
+            )
+
+        return note_entity_list
 
     async def delete(
-        self, *, note_entity_list: list[NoteEntity],
+        self,
+        *,
+        account_entity: AccountEntity,
+        note_entity_list: list[NoteEntity],
     ) -> list[NoteEntity]:
         """Delete given notes using id. Return delete notes."""
-        return await self.note_repository.delete(
-            note_entity_list=note_entity_list,
+        object_id_list = []
+        for note_entity in note_entity_list:
+            object_id_list.append(bson.ObjectId(note_entity.id_))
+
+        await self.note_repository.delete(
+            spec=specs.DeleteNoteSpecification(
+                username=account_entity.username,
+                object_id_list=object_id_list,
+            ),
         )
+
+        return note_entity_list

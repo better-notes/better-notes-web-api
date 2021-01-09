@@ -1,6 +1,9 @@
 # name: TestNoteRepository.test_add
   <class 'list'> [
     <class 'dict'> {
+      'account': <class 'dict'> {
+        'username': 'test_username',
+      },
       'tags': <class 'list'> [
         <class 'dict'> {
           'name': 'tag #0',
