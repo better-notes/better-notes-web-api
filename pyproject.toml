@@ -20,19 +20,18 @@ pytest = "^5.2"
 flake8 = "^3.7.9"
 mypy = "^0.770"
 black = "^19.10b0"
-ipython = "^7.13.0"
-ipdb = "^0.13.2"
 factory_boy = "^2.12.0"
 rope = "^0.16.0"
 syrupy = "^1.0.0"
 httpx = "^0.16.1"
 pytest-aiohttp = "^0.3.0"
 pytest-asyncio = "^0.14.0"
-wemake-python-styleguide = "^0.14.0"
 flake8-functions = "^0.0.4"
 isort = "^4.3.21"
 pytest-cov = "^2.10.1"
 flakehell = "^0.7.1"
+bpython = "^0.20.1"
+wemake-python-styleguide = {git = "https://github.com/wemake-services/wemake-python-styleguide.git", rev = "99937cf13c0a0fa57e56f0e91d6cd17105a3a1d6"}
 
 [tool.black]
 line-length = 79
@@ -78,6 +77,7 @@ pyflakes = ["+*"]
     "+*",
     "-WPS306",  # Found class without a base class. | 🪨📃✂️--✅📃-❌🪨
     "+WPS305",  # Found `f` string. | 🪨📃✂️--❌📃-❌📃--✅✂️-❌📃
+    "-WPS226",  # Found string constant over-use
 ]
 
 [tool.flakehell.exceptions."**/tests/**"]

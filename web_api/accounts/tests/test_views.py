@@ -1,8 +1,10 @@
 from syrupy.filters import props
 
 from web_api.accounts.dependencies import get_account_session_id_generator
-from web_api.accounts.tests.factories import (
+from web_api.accounts.tests.factories.usecase_factories import (
     AccountRegisterUseCaseFactory,
+)
+from web_api.accounts.tests.factories.value_factories import (
     AuthenticationCredentialsValueFactory,
     RegistrationCredentialsValueFactory,
 )

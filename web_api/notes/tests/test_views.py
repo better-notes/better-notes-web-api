@@ -1,6 +1,18 @@
 from fastapi.encoders import jsonable_encoder
 from syrupy.filters import props
 
+from web_api.accounts.entities import AccountSessionEntity
+from web_api.accounts.repositories import AccountRepository
+from web_api.accounts.tests.factories.repository_factories import (
+    AccountRepositoryFactory,
+)
+from web_api.accounts.tests.factories.usecase_factories import (
+    AccountSessionInteractorFactory,
+)
+from web_api.accounts.tests.factories.value_factories import (
+    AccountValueFactory,
+)
+from web_api.accounts.values import AccountValue
 from web_api.notes import interactors
 from web_api.notes.tests import factories
 
@@ -10,48 +22,80 @@ class TestNoteAPI:
     def interactor(self) -> interactors.NoteInteractor:
         return factories.NoteInteractorFactory()
 
+    async def get_account_session(self) -> AccountSessionEntity:
+        account_value: AccountValue = AccountValueFactory()
+        account_repository: AccountRepository = AccountRepositoryFactory()
+        account_session_interactor = await AccountSessionInteractorFactory()
+
+        account_entities = await account_repository.add(
+            account_value_list=[account_value],
+        )
+        return await account_session_interactor.add(
+            account_entity=account_entities[0],
+        )
+
     async def test_create(self, client, reverse_route, snapshot):
         note = factories.NoteValueFactory()
-
+        account_session_entity = await self.get_account_session()
         response = await client.post(
-            reverse_route('create_notes'), json=[note.dict()],
+            reverse_route('create_notes'),
+            json=[note.dict()],
+            headers={
+                'authorization-token': account_session_entity.token.value,
+            },
         )
         note_dict_list = response.json()
-
         assert note_dict_list == snapshot(exclude=props('created_at', 'id_'))
 
     async def test_read(self, client, reverse_route, snapshot):
+        account_session_entity = await self.get_account_session()
         await self.interactor.add(
+            account_entity=account_session_entity.account,
             note_value_list=[factories.NoteValueFactory()],
         )
 
         response = await client.get(
             '{0}{1}'.format(reverse_route('read_notes'), '?limit=10&offset=0'),
+            headers={
+                'authorization-token': account_session_entity.token.value,
+            },
         )
         note_dict_list = response.json()
 
         assert note_dict_list == snapshot(exclude=props('created_at', 'id_'))
 
     async def test_update(self, client, reverse_route, snapshot):
+        account_session_entity = await self.get_account_session()
         notes = await self.interactor.add(
+            account_entity=account_session_entity.account,
             note_value_list=[factories.NoteValueFactory()],
         )
         note = notes[0]
         note.text = 'Updated note text'
         response = await client.put(
-            reverse_route('update_notes'), json=jsonable_encoder([note]),
+            reverse_route('update_notes'),
+            json=jsonable_encoder([note]),
+            headers={
+                'authorization-token': account_session_entity.token.value,
+            },
         )
         note_dict_list = response.json()
 
         assert note_dict_list == snapshot(exclude=props('created_at', 'id_'))
 
     async def test_delete(self, client, reverse_route, snapshot):
+        account_session_entity = await self.get_account_session()
         notes = await self.interactor.add(
+            account_entity=account_session_entity.account,
             note_value_list=[factories.NoteValueFactory()],
         )
 
         response = await client.post(
-            reverse_route('delete_notes'), json=jsonable_encoder(notes),
+            reverse_route('delete_notes'),
+            json=jsonable_encoder(notes),
+            headers={
+                'authorization-token': account_session_entity.token.value,
+            },
         )
         note_dict_list = response.json()
 
