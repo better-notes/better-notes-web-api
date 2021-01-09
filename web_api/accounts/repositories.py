@@ -53,11 +53,11 @@ class AccountRepository(AbstractRepository):
     async def get(
         self, *, spec: commons.specs.Specification, paging: Paging,
     ) -> list[entities.AccountEntity]:
-        cursor = (
-            self.users_collection.find(spec.get_query())
-            .limit(paging.limit)  # noqa: WPS348 TODO: discuss
-            .skip(paging.offset)  # noqa: WPS348 TODO: discuss
-        )
+        # fmt: off
+        cursor = self.users_collection.find(
+            spec.get_query(),
+        ).limit(paging.limit).skip(paging.offset)
+        # fmt: on
 
         account_entity_list = []
         async for account_entity_dict in cursor:

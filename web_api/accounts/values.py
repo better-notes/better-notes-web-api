@@ -26,7 +26,7 @@ class AuthenticationTokenValue(values.Value):
 
 
 class AccountValue(values.Value):
-    """Account value."""
+    """Account value. Used to add/update accounts."""
 
     username: str
     password_hash: str

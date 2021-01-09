@@ -23,7 +23,7 @@ def get_user_repository(
     return repositories.AccountRepository(client=client, settings=settings)
 
 
-USER_REPOSITORY_DEPENDENCY = Depends(get_user_repository)
+ACCOUNT_REPOSITORY_DEPENDENCY = Depends(get_user_repository)
 
 
 def get_bcrypt() -> bcrypt:
@@ -35,7 +35,7 @@ BCRYPT_DEPENDENCY = Depends(get_bcrypt)
 
 def get_account_register_use_case(
     user_repository: repositories.AccountRepository = (
-        USER_REPOSITORY_DEPENDENCY
+        ACCOUNT_REPOSITORY_DEPENDENCY
     ),
     hasher: bcrypt = BCRYPT_DEPENDENCY,
 ) -> usecases.AccountRegisterUseCase:
@@ -49,7 +49,7 @@ ACCOUNT_REGISTER_USE_CASE_DEPENDENCY = Depends(get_account_register_use_case)
 
 def get_account_authenticate_use_case(
     user_repository: repositories.AccountRepository = (
-        USER_REPOSITORY_DEPENDENCY
+        ACCOUNT_REPOSITORY_DEPENDENCY
     ),
     hash_verifier: bcrypt = BCRYPT_DEPENDENCY,
 ) -> usecases.AccountAuthenticateUseCase:

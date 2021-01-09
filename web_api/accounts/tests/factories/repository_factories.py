@@ -24,5 +24,4 @@ class AccountSessionRepositoryFactory(AsyncFactory):
     class Meta:
         model = AccountSessionRepository
 
-    # TODO: pass redis addres to generated client somehow.
     client = factory.SubFactory(RedisPoolFactory)
