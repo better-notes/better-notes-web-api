@@ -1,0 +1,17 @@
+name: Notify pull requests.
+
+on:
+  - pull_request
+
+jobs:
+  install-dependencies:
+    name: Install dependencies & cache
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@master
+    - name: send custom message with args
+      uses: appleboy/telegram-action@master
+      with:
+        to: ${{ secrets.TELEGRAM_BOT_CHAT }}
+        token: ${{ secrets.TELEGRAM_BOT_TOKEN }}
+        args: The ${{ github.event_name }} event triggered first step.
