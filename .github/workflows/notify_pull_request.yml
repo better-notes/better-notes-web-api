@@ -8,10 +8,16 @@ jobs:
     name: Install dependencies & cache
     runs-on: ubuntu-latest
     steps:
-    - uses: actions/checkout@master
+
+    - name: Get pull request url
+      id: get-pr-url
+      uses: kceb/pull-request-url-action@v1
+      with:
+        github-oauth-token: ${{ secrets.OAUTH_TOKEN }}
+
     - name: send custom message with args
       uses: appleboy/telegram-action@master
       with:
         to: ${{ secrets.TELEGRAM_BOT_CHAT }}
         token: ${{ secrets.TELEGRAM_BOT_TOKEN }}
-        args: The ${{ github.event_name }} event triggered first step.
+        args: Ох бля, надо ревьюить пулл реквест - ${{ steps.get-pr-url.outputs.url }}
