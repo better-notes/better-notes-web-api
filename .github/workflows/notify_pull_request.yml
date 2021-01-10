@@ -1,0 +1,19 @@
+name: Notify pull requests.
+
+on:
+  - pull_request
+
+jobs:
+  notify:
+    name: Send telegram notification w/ pr url
+    runs-on: ubuntu-latest
+    steps:
+
+    - name: send custom message with args
+      uses: appleboy/telegram-action@master
+      env:
+        PR_NUMBER: ${{ github.event.number }}
+      with:
+        to: ${{ secrets.TELEGRAM_BOT_CHAT }}
+        token: ${{ secrets.TELEGRAM_BOT_TOKEN }}
+        args: Check out pull request - https://github.com/better-notes/better-notes-web-api/pull/${{ env.PR_NUMBER }}
