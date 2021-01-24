@@ -2,9 +2,13 @@ import uvicorn
 import uvloop
 from fastapi import FastAPI
 from fastapi.routing import APIRouter
+from pydantic.error_wrappers import ValidationError
 from starlette.middleware.cors import CORSMiddleware
 
 from web_api.accounts import views as accounts_views
+from web_api.commons.exception_handlers import (
+    validation_error_exception_handler,
+)
 from web_api.notes import views as notes_views
 
 
@@ -26,6 +30,10 @@ def get_application() -> FastAPI:
         allow_credentials=True,
         allow_methods=["*"],
         allow_headers=["*"],
+    )
+
+    app.add_exception_handler(
+        ValidationError, validation_error_exception_handler
     )
 
     return app

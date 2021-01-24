@@ -1,4 +1,5 @@
 import abc
+from typing import Any
 
 from pydantic import BaseModel, validator
 
@@ -26,3 +27,7 @@ class Paging(Value):
             )
 
         return limit
+
+
+class Error(Value):
+    detail: list[dict[str, Any]]
