@@ -33,7 +33,7 @@ def get_application() -> FastAPI:
     )
 
     app.add_exception_handler(
-        ValidationError, validation_error_exception_handler
+        ValidationError, validation_error_exception_handler,
     )
 
     return app

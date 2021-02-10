@@ -29,5 +29,7 @@ class Paging(Value):
         return limit
 
 
-class Error(Value):
+class ErrorValue(Value):
+    """Value for `validation_error_exception_handler`."""
+
     detail: list[dict[str, Any]]
