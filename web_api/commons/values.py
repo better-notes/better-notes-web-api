@@ -1,4 +1,5 @@
 import abc
+from typing import Any
 
 from pydantic import BaseModel, validator
 
@@ -26,3 +27,9 @@ class Paging(Value):
             )
 
         return limit
+
+
+class ErrorValue(Value):
+    """Value for `validation_error_exception_handler`."""
+
+    detail: list[dict[str, Any]]
