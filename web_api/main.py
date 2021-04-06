@@ -2,6 +2,7 @@ import uvicorn
 import uvloop
 from fastapi import FastAPI
 from fastapi.routing import APIRouter
+from motor import motor_asyncio
 from pydantic.error_wrappers import ValidationError
 from starlette.middleware.cors import CORSMiddleware
 
@@ -26,10 +27,10 @@ def get_application() -> FastAPI:
 
     app.add_middleware(
         CORSMiddleware,
-        allow_origins=["*"],
+        allow_origins=['*'],
         allow_credentials=True,
-        allow_methods=["*"],
-        allow_headers=["*"],
+        allow_methods=['*'],
+        allow_headers=['*'],
     )
 
     app.add_exception_handler(
@@ -43,5 +44,5 @@ uvloop.install()
 app = get_application()
 
 
-if __name__ == "__main__":
-    uvicorn.run(app, host="0.0.0.0", port=8000)
+if __name__ == '__main__':
+    uvicorn.run(app, host='0.0.0.0', port=8000)

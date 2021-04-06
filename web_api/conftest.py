@@ -1,9 +1,11 @@
+import asyncio
+
 import factory
 import pytest
 from httpx import AsyncClient
 from motor import motor_asyncio
-from motor.frameworks import asyncio
 
+from web_api.indexes import create_indexes
 from web_api.main import get_application
 from web_api.settings import Settings
 
@@ -16,7 +18,7 @@ def reset_sequence() -> None:
 
 
 @pytest.fixture
-def motor_client():  # type: ignore
+async def motor_client():  # type: ignore
     settings = Settings()
     loop = asyncio.get_event_loop()
 
@@ -26,12 +28,15 @@ def motor_client():  # type: ignore
 
 
 @pytest.fixture(autouse=True)
-async def clear_mongo(motor_client):  # type: ignore
+async def clear_mongo(motor_client: motor_asyncio.AsyncIOMotorClient):
     """Clear mongodb before and after each test."""
     settings = Settings()
-    motor_client.drop_database(settings.MONGO_DATABASE)
+    await motor_client.drop_database(settings.MONGO_DATABASE)
+    await create_indexes(
+        motor_client[settings.MONGO_DATABASE], settings=settings,
+    )
     yield
-    motor_client.drop_database(settings.MONGO_DATABASE)
+    await motor_client.drop_database(settings.MONGO_DATABASE)
 
 
 @pytest.fixture

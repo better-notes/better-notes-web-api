@@ -14,3 +14,6 @@ class Settings(BaseSettings):
     MONGO_DATABASE: str = 'better_notes'
 
     REDIS_ADDRESS: str = 'redis://localhost:6379'
+
+    NOTES_COLLECTION: str = 'notes'
+    USERS_COLLECTION: str = 'users'

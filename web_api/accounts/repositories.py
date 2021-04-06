@@ -3,7 +3,9 @@ from datetime import datetime, timedelta, timezone
 
 import bson
 from aioredis.commands import Redis
+from fastapi import HTTPException, status
 from motor import motor_asyncio
+from pymongo.errors import DuplicateKeyError
 from pymongo.results import InsertOneResult
 
 from web_api import commons
@@ -14,15 +16,25 @@ from web_api.settings import Settings
 
 
 @dataclasses.dataclass
+class AccountDuplicateUsernameError(HTTPException):
+    status_code: int = status.HTTP_400_BAD_REQUEST
+    detail: str = 'Account with given username already exist.'
+
+
+@dataclasses.dataclass
 class AccountRepository(AbstractRepository):
     """Repository for accounts."""
 
     client: motor_asyncio.AsyncIOMotorClient
     settings: Settings
 
-    def __post_init__(self) -> None:
-        db = self.client[self.settings.MONGO_DATABASE]
-        self.users_collection = db['users']
+    @property
+    def db(self) -> motor_asyncio.AsyncIOMotorDatabase:
+        return self.client[self.settings.MONGO_DATABASE]
+
+    @property
+    def users_collection(self) -> motor_asyncio.AsyncIOMotorCollection:
+        return self.db[self.settings.USERS_COLLECTION]
 
     async def add(
         self, *, account_value_list: list[values.AccountValue],
@@ -33,11 +45,14 @@ class AccountRepository(AbstractRepository):
             value_data = account_value.dict()
 
             created_at = datetime.now(timezone.utc)
-            user_insert: InsertOneResult = (
-                await self.users_collection.insert_one(
-                    {**value_data, 'created_at': created_at}
+            try:
+                user_insert: InsertOneResult = (
+                    await self.users_collection.insert_one(
+                        {**value_data, 'created_at': created_at},
+                    )
                 )
-            )
+            except DuplicateKeyError:
+                raise AccountDuplicateUsernameError()
 
             value_data.pop('password_hash')
             inserted_entities.append(
@@ -45,7 +60,7 @@ class AccountRepository(AbstractRepository):
                     id_=str(user_insert.inserted_id),
                     created_at=created_at,
                     **value_data,
-                )
+                ),
             )
 
         return inserted_entities

@@ -8,3 +8,8 @@
     'value': 'session_id',
   }
 ---
+# name: test_register_duplicate_username
+  <class 'dict'> {
+    'detail': 'Account with given username already exist.',
+  }
+---

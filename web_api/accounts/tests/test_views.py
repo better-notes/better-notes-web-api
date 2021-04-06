@@ -1,10 +1,15 @@
+from fastapi import status
 from syrupy.filters import props
 
 from web_api.accounts.dependencies import get_account_session_id_generator
+from web_api.accounts.tests.factories.repository_factories import (
+    AccountRepositoryFactory,
+)
 from web_api.accounts.tests.factories.usecase_factories import (
     AccountRegisterUseCaseFactory,
 )
 from web_api.accounts.tests.factories.value_factories import (
+    AccountValueFactory,
     AuthenticationCredentialsValueFactory,
     RegistrationCredentialsValueFactory,
 )
@@ -21,6 +26,32 @@ async def test_register(client, app, reverse_route, snapshot):
     )
 
     assert response.json() == snapshot(exclude=props('id_', 'created_at'))
+    assert response.status_code == status.HTTP_200_OK
+
+
+async def test_register_duplicate_username(
+    client, app, reverse_route, snapshot
+):
+    app.dependency_overrides[
+        get_account_session_id_generator
+    ] = lambda: lambda: 'session_id'
+
+    test_username = 'test username'
+
+    account_repository = AccountRepositoryFactory()
+    account_value = AccountValueFactory(username=test_username)
+
+    await account_repository.add(account_value_list=[account_value])
+
+    registration_credentials = RegistrationCredentialsValueFactory(
+        username=test_username,
+    )
+    response = await client.post(
+        reverse_route('register'), json=registration_credentials.dict(),
+    )
+
+    assert response.json() == snapshot(exclude=props('id_', 'created_at'))
+    assert response.status_code == status.HTTP_400_BAD_REQUEST
 
 
 async def test_authenticate(client, app, reverse_route, snapshot):
