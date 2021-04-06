@@ -64,7 +64,7 @@ ACCOUNT_AUTHENTICATE_USE_CASE_DEPENDENCY = Depends(
 
 
 async def get_redis(settings: Settings = SETTINGS_DEPENDENCY) -> Redis:
-    return await create_redis(settings.REDIS_ADDRESS)
+    return await create_redis(settings.redis_address)
 
 
 REDIS_DEPENDENCY = Depends(get_redis)

@@ -22,7 +22,7 @@ async def test_register(client, app, reverse_route, snapshot):
 
     registration_credentials = RegistrationCredentialsValueFactory()
     response = await client.post(
-        reverse_route('register'), json=registration_credentials.dict()
+        reverse_route('register'), json=registration_credentials.dict(),
     )
 
     assert response.json() == snapshot(exclude=props('id_', 'created_at'))
@@ -30,7 +30,7 @@ async def test_register(client, app, reverse_route, snapshot):
 
 
 async def test_register_duplicate_username(
-    client, app, reverse_route, snapshot
+    client, app, reverse_route, snapshot,
 ):
     app.dependency_overrides[
         get_account_session_id_generator

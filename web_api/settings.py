@@ -4,16 +4,22 @@ from pydantic import BaseSettings
 
 logging.basicConfig(
     level=logging.INFO,
-    format='[%(asctime)s - %(name)s - %(levelname)s]: %(message)s',
+    format='[{asctime} - {name} - {levelname}]: {message}',
+    style='{',
 )
 
 
 class Settings(BaseSettings):
-    MONGO_HOST: str = 'localhost'
-    MONGO_PORT: int = 27017
-    MONGO_DATABASE: str = 'better_notes'
+    """Project settings container."""
 
-    REDIS_ADDRESS: str = 'redis://localhost:6379'
+    mongo_host: str = 'localhost'
+    mongo_port: int = 27017
+    mongo_database: str = 'better_notes'
 
-    NOTES_COLLECTION: str = 'notes'
-    USERS_COLLECTION: str = 'users'
+    redis_address: str = 'redis://localhost:6379'
+
+    notes_collection: str = 'notes'
+    accounts_collection: str = 'accounts'
+
+    app_host: str = '0.0.0.0'  # noqa: S104
+    app_port: int = 8000

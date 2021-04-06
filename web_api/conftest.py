@@ -19,24 +19,27 @@ def reset_sequence() -> None:
 
 @pytest.fixture
 async def motor_client():  # type: ignore
+    """Client for mongo."""
     settings = Settings()
     loop = asyncio.get_event_loop()
 
     return motor_asyncio.AsyncIOMotorClient(
-        settings.MONGO_HOST, settings.MONGO_PORT, io_loop=loop
+        settings.mongo_host, settings.mongo_port, io_loop=loop,
     )
 
 
 @pytest.fixture(autouse=True)
-async def clear_mongo(motor_client: motor_asyncio.AsyncIOMotorClient):
+async def clear_mongo(
+    motor_client: motor_asyncio.AsyncIOMotorClient,  # noqa: WPS442
+):
     """Clear mongodb before and after each test."""
     settings = Settings()
-    await motor_client.drop_database(settings.MONGO_DATABASE)
+    await motor_client.drop_database(settings.mongo_database)
     await create_indexes(
-        motor_client[settings.MONGO_DATABASE], settings=settings,
+        motor_client[settings.mongo_database], settings=settings,
     )
     yield
-    await motor_client.drop_database(settings.MONGO_DATABASE)
+    await motor_client.drop_database(settings.mongo_database)
 
 
 @pytest.fixture

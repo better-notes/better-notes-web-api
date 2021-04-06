@@ -17,7 +17,7 @@ async def _get_mongo_client(
 ) -> motor_asyncio.AsyncIOMotorClient:
     # XXX: async b/c motor client requires loop for instantiation ¯\_(ツ)_/¯
     return motor_asyncio.AsyncIOMotorClient(
-        settings.MONGO_HOST, settings.MONGO_PORT,
+        settings.mongo_host, settings.mongo_port,
     )
 
 

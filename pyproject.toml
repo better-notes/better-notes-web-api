@@ -30,7 +30,7 @@ isort = "^4.3.21"
 pytest-cov = "^2.10.1"
 flakehell = "^0.7.1"
 bpython = "^0.20.1"
-wemake-python-styleguide = {git = "https://github.com/wemake-services/wemake-python-styleguide.git", rev = "99937cf13c0a0fa57e56f0e91d6cd17105a3a1d6"}
+wemake-python-styleguide = ">=0.14.1"
 factory-boy = ">=3.2.0"
 ipython = "^7.22.0"
 ipdb = "^0.13.7"
@@ -69,6 +69,7 @@ max_line_length = 79
     "+*", "-D100", "-D104", "-D401", "-RST303", "-RST304", "-DAR103", "-DAR203",
     "-DAR101",  # Missing parameter(s) in Docstring: - {0} | We use mypy.
     "-DAR201",  # Missing "Returns" in Docstring: - {0} | We use mypy.
+    "-DAR301",  # Missing "Yields" in Docstring: - {0} | We use mypy.
 ]
 mccabe = ["+*"]
 nitpick = ["+*"]
@@ -93,6 +94,7 @@ pyflakes = ["+*"]
     "-D101",  # Missing docstring in public class
     "-D102",  # Missing docstring in public method
     "-D106",  # Missing docstring in public nested class
+    "-D103",    # Missing docstring in public function | Why add docstrings to tests?
 ]
 
 [tool.coverage.run]

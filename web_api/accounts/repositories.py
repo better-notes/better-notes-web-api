@@ -11,12 +11,13 @@ from pymongo.results import InsertOneResult
 from web_api import commons
 from web_api.accounts import entities, values
 from web_api.commons.repositories import AbstractRepository
-from web_api.commons.values import Paging
 from web_api.settings import Settings
 
 
 @dataclasses.dataclass
 class AccountDuplicateUsernameError(HTTPException):
+    """Raised when trying to create account w/ already existing username."""
+
     status_code: int = status.HTTP_400_BAD_REQUEST
     detail: str = 'Account with given username already exist.'
 
@@ -30,11 +31,13 @@ class AccountRepository(AbstractRepository):
 
     @property
     def db(self) -> motor_asyncio.AsyncIOMotorDatabase:
-        return self.client[self.settings.MONGO_DATABASE]
+        """Mongo database instance."""
+        return self.client[self.settings.mongo_database]
 
     @property
     def users_collection(self) -> motor_asyncio.AsyncIOMotorCollection:
-        return self.db[self.settings.USERS_COLLECTION]
+        """Accounts collection instalce."""
+        return self.db[self.settings.accounts_collection]
 
     async def add(
         self, *, account_value_list: list[values.AccountValue],
@@ -66,7 +69,10 @@ class AccountRepository(AbstractRepository):
         return inserted_entities
 
     async def get(
-        self, *, spec: commons.specs.Specification, paging: Paging,
+        self,
+        *,
+        spec: commons.specs.Specification,
+        paging: commons.values.Paging,
     ) -> list[entities.AccountEntity]:
         # fmt: off
         cursor = self.users_collection.find(
