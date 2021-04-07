@@ -1,4 +1,4 @@
-version: '3.8'
+version: "3.8"
 
 services:
   mongo:
@@ -26,7 +26,6 @@ services:
 
     ports:
       - 8000:8000
-
 
 volumes:
   mongo:

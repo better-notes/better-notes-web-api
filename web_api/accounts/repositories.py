@@ -3,14 +3,23 @@ from datetime import datetime, timedelta, timezone
 
 import bson
 from aioredis.commands import Redis
+from fastapi import HTTPException, status
 from motor import motor_asyncio
+from pymongo.errors import DuplicateKeyError
 from pymongo.results import InsertOneResult
 
 from web_api import commons
 from web_api.accounts import entities, values
 from web_api.commons.repositories import AbstractRepository
-from web_api.commons.values import Paging
 from web_api.settings import Settings
+
+
+@dataclasses.dataclass
+class AccountDuplicateUsernameError(HTTPException):
+    """Raised when trying to create account w/ already existing username."""
+
+    status_code: int = status.HTTP_400_BAD_REQUEST
+    detail: str = 'Account with given username already exist.'
 
 
 @dataclasses.dataclass
@@ -20,9 +29,15 @@ class AccountRepository(AbstractRepository):
     client: motor_asyncio.AsyncIOMotorClient
     settings: Settings
 
-    def __post_init__(self) -> None:
-        db = self.client[self.settings.MONGO_DATABASE]
-        self.users_collection = db['users']
+    @property
+    def db(self) -> motor_asyncio.AsyncIOMotorDatabase:
+        """Mongo database instance."""
+        return self.client[self.settings.mongo_database]
+
+    @property
+    def users_collection(self) -> motor_asyncio.AsyncIOMotorCollection:
+        """Accounts collection instalce."""
+        return self.db[self.settings.accounts_collection]
 
     async def add(
         self, *, account_value_list: list[values.AccountValue],
@@ -33,11 +48,14 @@ class AccountRepository(AbstractRepository):
             value_data = account_value.dict()
 
             created_at = datetime.now(timezone.utc)
-            user_insert: InsertOneResult = (
-                await self.users_collection.insert_one(
-                    {**value_data, 'created_at': created_at}
+            try:
+                user_insert: InsertOneResult = (
+                    await self.users_collection.insert_one(
+                        {**value_data, 'created_at': created_at},
+                    )
                 )
-            )
+            except DuplicateKeyError:
+                raise AccountDuplicateUsernameError()
 
             value_data.pop('password_hash')
             inserted_entities.append(
@@ -45,13 +63,16 @@ class AccountRepository(AbstractRepository):
                     id_=str(user_insert.inserted_id),
                     created_at=created_at,
                     **value_data,
-                )
+                ),
             )
 
         return inserted_entities
 
     async def get(
-        self, *, spec: commons.specs.Specification, paging: Paging,
+        self,
+        *,
+        spec: commons.specs.Specification,
+        paging: commons.values.Paging,
     ) -> list[entities.AccountEntity]:
         # fmt: off
         cursor = self.users_collection.find(

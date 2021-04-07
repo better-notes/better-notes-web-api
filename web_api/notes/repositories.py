@@ -21,7 +21,7 @@ class NoteRepository(AbstractRepository):
 
     def __post_init__(self) -> None:
         """Initialize mongo client."""
-        db = self.client[self.settings.MONGO_DATABASE]
+        db = self.client[self.settings.mongo_database]
         self.notes_collection = db['notes']
 
     async def add(
