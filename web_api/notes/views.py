@@ -8,7 +8,7 @@ from web_api.accounts.usecases import AccountSessionInteractor
 from web_api.accounts.values import AuthenticationTokenValue
 from web_api.commons.dependencies import PAGING_DEPENDENCY
 from web_api.commons.values import Paging
-from web_api.notes import entities, interactors, values
+from web_api.notes import entities, usecases, values
 from web_api.notes.dependencies import NOTE_INTERACTOR_DEPENDENCY
 
 router = APIRouter()
@@ -18,7 +18,7 @@ router = APIRouter()
 async def create_notes(
     note_values: list[values.NoteValue],
     authorization_token: str = AUTHORIZATION_TOKEN_HEADER_DEPENDENCY,
-    note_interactor: interactors.NoteInteractor = NOTE_INTERACTOR_DEPENDENCY,
+    note_interactor: usecases.NoteInteractor = NOTE_INTERACTOR_DEPENDENCY,
     account_session_interactor: AccountSessionInteractor = (
         ACCOUNT_SESSION_INTERACTOR_DEPENDENCY
     ),
@@ -39,7 +39,7 @@ async def create_notes(
 @router.get('/note/read/', response_model=list[entities.NoteEntity])
 async def read_notes(
     paging: Paging = PAGING_DEPENDENCY,
-    note_interactor: interactors.NoteInteractor = NOTE_INTERACTOR_DEPENDENCY,
+    note_interactor: usecases.NoteInteractor = NOTE_INTERACTOR_DEPENDENCY,
     authorization_token: str = AUTHORIZATION_TOKEN_HEADER_DEPENDENCY,
     account_session_interactor: AccountSessionInteractor = (
         ACCOUNT_SESSION_INTERACTOR_DEPENDENCY
@@ -61,7 +61,7 @@ async def read_notes(
 @router.put('/note/update/', response_model=list[entities.NoteEntity])
 async def update_notes(
     note_entities: list[entities.NoteEntity],
-    note_interactor: interactors.NoteInteractor = NOTE_INTERACTOR_DEPENDENCY,
+    note_interactor: usecases.NoteInteractor = NOTE_INTERACTOR_DEPENDENCY,
     authorization_token: str = AUTHORIZATION_TOKEN_HEADER_DEPENDENCY,
     account_session_interactor: AccountSessionInteractor = (
         ACCOUNT_SESSION_INTERACTOR_DEPENDENCY
@@ -83,7 +83,7 @@ async def update_notes(
 @router.post('/note/delete/', response_model=list[entities.NoteEntity])
 async def delete_notes(
     note_entities: list[entities.NoteEntity],
-    note_interactor: interactors.NoteInteractor = NOTE_INTERACTOR_DEPENDENCY,
+    note_interactor: usecases.NoteInteractor = NOTE_INTERACTOR_DEPENDENCY,
     authorization_token: str = AUTHORIZATION_TOKEN_HEADER_DEPENDENCY,
     account_session_interactor: AccountSessionInteractor = (
         ACCOUNT_SESSION_INTERACTOR_DEPENDENCY

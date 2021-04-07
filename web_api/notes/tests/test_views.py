@@ -13,13 +13,13 @@ from web_api.accounts.tests.factories.value_factories import (
     AccountValueFactory,
 )
 from web_api.accounts.values import AccountValue
-from web_api.notes import interactors
+from web_api.notes import usecases
 from web_api.notes.tests import factories
 
 
 class TestNoteAPI:
     @property
-    def interactor(self) -> interactors.NoteInteractor:
+    def interactor(self) -> usecases.NoteInteractor:
         return factories.NoteInteractorFactory()
 
     async def get_account_session(self) -> AccountSessionEntity:
