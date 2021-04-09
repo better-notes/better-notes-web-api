@@ -40,8 +40,8 @@ class TestNoteAPI:
         response = await client.post(
             reverse_route('create_notes'),
             json=[note.dict()],
-            headers={
-                'authorization-token': account_session_entity.token.value,
+            cookies={
+                'authentication_token': account_session_entity.token.value,
             },
         )
         note_dict_list = response.json()
@@ -56,8 +56,8 @@ class TestNoteAPI:
 
         response = await client.get(
             '{0}{1}'.format(reverse_route('read_notes'), '?limit=10&offset=0'),
-            headers={
-                'authorization-token': account_session_entity.token.value,
+            cookies={
+                'authentication_token': account_session_entity.token.value,
             },
         )
         note_dict_list = response.json()
@@ -75,8 +75,8 @@ class TestNoteAPI:
         response = await client.put(
             reverse_route('update_notes'),
             json=jsonable_encoder([note]),
-            headers={
-                'authorization-token': account_session_entity.token.value,
+            cookies={
+                'authentication_token': account_session_entity.token.value,
             },
         )
         note_dict_list = response.json()
@@ -93,8 +93,8 @@ class TestNoteAPI:
         response = await client.post(
             reverse_route('delete_notes'),
             json=jsonable_encoder(notes),
-            headers={
-                'authorization-token': account_session_entity.token.value,
+            cookies={
+                'authentication_token': account_session_entity.token.value,
             },
         )
         note_dict_list = response.json()

@@ -2,7 +2,7 @@ import factory
 
 from web_api import commons
 from web_api.commons.tests.factories import MotorClientFactory, SettingsFactory
-from web_api.notes import usecases, repositories, values
+from web_api.notes import repositories, usecases, values
 
 
 class TagValueFactory(factory.Factory):  # type: ignore

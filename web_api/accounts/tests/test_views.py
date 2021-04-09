@@ -25,7 +25,7 @@ async def test_register(client, app, reverse_route, snapshot):
         reverse_route('register'), json=registration_credentials.dict(),
     )
 
-    assert response.json() == snapshot(exclude=props('id_', 'created_at'))
+    assert dict(response.cookies) == snapshot
     assert response.status_code == status.HTTP_200_OK
 
 
@@ -61,18 +61,19 @@ async def test_authenticate(client, app, reverse_route, snapshot):
 
     password = 'test_password'
     registration_credentials = RegistrationCredentialsValueFactory(
-        password1=password, password2=password
+        password1=password, password2=password,
     )
     account_register_use_case = AccountRegisterUseCaseFactory()
     user_entity = await account_register_use_case.register(
-        registration_credentials=registration_credentials
+        registration_credentials=registration_credentials,
     )
 
     authentication_credentials = AuthenticationCredentialsValueFactory(
-        username=user_entity.username, password=password
+        username=user_entity.username, password=password,
     )
     response = await client.post(
-        reverse_route('authenticate'), json=authentication_credentials.dict()
+        reverse_route('authenticate'), json=authentication_credentials.dict(),
     )
 
-    assert response.json() == snapshot(exclude=props('id_', 'created_at'))
+    assert dict(response.cookies) == snapshot
+    assert response.status_code == status.HTTP_200_OK

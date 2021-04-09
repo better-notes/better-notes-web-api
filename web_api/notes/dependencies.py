@@ -5,7 +5,7 @@ from web_api.commons.dependencies import (
     MONGO_CLIENT_DEPENDENCY,
     SETTINGS_DEPENDENCY,
 )
-from web_api.notes import usecases, repositories
+from web_api.notes import repositories, usecases
 from web_api.settings import Settings
 
 
