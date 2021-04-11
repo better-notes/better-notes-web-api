@@ -2,7 +2,7 @@ import factory
 
 from web_api import commons
 from web_api.commons.tests.factories import MotorClientFactory, SettingsFactory
-from web_api.notes import interactors, repositories, values
+from web_api.notes import repositories, usecases, values
 
 
 class TagValueFactory(factory.Factory):  # type: ignore
@@ -30,7 +30,7 @@ class NoteRepositoryFactory(factory.Factory):  # type: ignore
 
 class NoteInteractorFactory(factory.Factory):
     class Meta:
-        model = interactors.NoteInteractor
+        model = usecases.NoteInteractor
 
     note_repository = factory.SubFactory(NoteRepositoryFactory)
 

@@ -1,4 +1,5 @@
 from fastapi import APIRouter
+from fastapi.responses import JSONResponse
 
 from web_api.accounts.dependencies import (
     ACCOUNT_AUTHENTICATE_USE_CASE_DEPENDENCY,
@@ -12,16 +13,13 @@ from web_api.accounts.usecases import (
 )
 from web_api.accounts.values import (
     AuthenticationCredentialsValue,
-    AuthenticationTokenValue,
     RegistrationCredentialsValue,
 )
 
 router = APIRouter()
 
 
-@router.post(
-    '/account/register/', response_model=AuthenticationTokenValue,
-)
+@router.post('/account/register/')
 async def register(
     registration_credentials: RegistrationCredentialsValue,
     account_register_use_case: AccountRegisterUseCase = (
@@ -30,7 +28,7 @@ async def register(
     user_session_interactor: AccountSessionInteractor = (
         ACCOUNT_SESSION_INTERACTOR_DEPENDENCY
     ),
-) -> AuthenticationTokenValue:
+) -> JSONResponse:
     account_entity = await account_register_use_case.register(
         registration_credentials=registration_credentials,
     )
@@ -38,12 +36,17 @@ async def register(
         account_entity=account_entity,
     )
 
-    return user_session.token
+    response = JSONResponse(content={})
+    response.set_cookie(
+        key='authentication_token',
+        value=user_session.token.value,
+        httponly=True,
+    )
+
+    return response
 
 
-@router.post(
-    '/account/authenticate/', response_model=AuthenticationTokenValue,
-)
+@router.post('/account/authenticate/')
 async def authenticate(
     authentication_credentials: AuthenticationCredentialsValue,
     account_authenticate_use_case: AccountAuthenticateUseCase = (
@@ -52,10 +55,17 @@ async def authenticate(
     user_session_interactor: AccountSessionInteractor = (
         ACCOUNT_SESSION_INTERACTOR_DEPENDENCY
     ),
-) -> AuthenticationTokenValue:
+) -> JSONResponse:
     user = await account_authenticate_use_case.authenticate(
         authentication_credentials=authentication_credentials,
     )
     user_session = await user_session_interactor.add(account_entity=user)
 
-    return user_session.token
+    response = JSONResponse(content={})
+    response.set_cookie(
+        key='authentication_token',
+        value=user_session.token.value,
+        httponly=True,
+    )
+
+    return response

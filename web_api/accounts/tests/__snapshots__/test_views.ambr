@@ -1,11 +1,11 @@
 # name: test_authenticate
   <class 'dict'> {
-    'value': 'session_id',
+    'authentication_token': 'session_id',
   }
 ---
 # name: test_register
   <class 'dict'> {
-    'value': 'session_id',
+    'authentication_token': 'session_id',
   }
 ---
 # name: test_register_duplicate_username
