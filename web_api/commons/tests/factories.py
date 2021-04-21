@@ -1,5 +1,6 @@
 import asyncio
 import inspect
+from typing import Any, Generic, TypeVar
 
 import factory
 from aioredis.commands import Redis, create_redis
@@ -7,11 +8,23 @@ from motor import motor_asyncio
 
 from web_api.settings import Settings
 
+Type = TypeVar('Type')
+
+
+class BaseFactory(
+    Generic[Type],
+    factory.base.BaseFactory,
+    metaclass=factory.base.FactoryMetaClass,
+):
+    class Meta(factory.base.BaseMeta):
+        """Base meta."""
+
+    def __new__(cls, *args: Any, **kwargs: Any) -> Type:  # noqa: WPS612
+        return super().__new__(*args, **kwargs)  # type: ignore
+
 
 class AsyncFactory(factory.Factory):
     """Factory capable of creating objects w/ async functions."""
-
-    # TODO: move to commons if other applications would benefit from it
 
     @classmethod
     async def create_batch(cls, size, **kwargs):
@@ -28,14 +41,12 @@ class AsyncFactory(factory.Factory):
         return asyncio.create_task(maker_coroutine())
 
 
-class SettingsFactory(factory.Factory):
-    # TODO: #11 move settings factory to commons
+class SettingsFactory(BaseFactory[motor_asyncio.AsyncIOMotorClient]):
     class Meta:
         model = Settings
 
 
-class MotorClientFactory(factory.Factory):
-    # TODO: #12 move motor client factory to commons
+class MotorClientFactory(BaseFactory[motor_asyncio.AsyncIOMotorClient]):
     class Meta:
         model = motor_asyncio.AsyncIOMotorClient
 
@@ -44,7 +55,7 @@ class MotorClientFactory(factory.Factory):
     io_loop = factory.LazyFunction(asyncio.get_event_loop)
 
 
-class RedisPoolFactory(AsyncFactory):
+class RedisPoolFactory(BaseFactory[Redis], AsyncFactory):
     class Meta:
         model = Redis
 

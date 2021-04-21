@@ -1,18 +1,23 @@
 import factory
 
 from web_api import commons
-from web_api.commons.tests.factories import MotorClientFactory, SettingsFactory
+from web_api.commons.tests.factories import (
+    BaseFactory,
+    MotorClientFactory,
+    SettingsFactory,
+)
+from web_api.commons.values import OrderingType
 from web_api.notes import repositories, usecases, values
 
 
-class TagValueFactory(factory.Factory):  # type: ignore
+class TagValueFactory(BaseFactory[values.TagValue]):  # type: ignore
     class Meta:
         model = values.TagValue
 
     name = factory.Sequence('tag #{0}'.format)
 
 
-class NoteValueFactory(factory.Factory):  # type: ignore
+class NoteValueFactory(BaseFactory[values.NoteValue]):  # type: ignore
     class Meta:
         model = values.NoteValue
 
@@ -28,7 +33,7 @@ class NoteRepositoryFactory(factory.Factory):  # type: ignore
     settings = factory.SubFactory(SettingsFactory)
 
 
-class NoteInteractorFactory(factory.Factory):
+class NoteInteractorFactory(BaseFactory[usecases.NoteInteractor]):
     class Meta:
         model = usecases.NoteInteractor
 
@@ -43,7 +48,7 @@ class PagingFactory(factory.Factory):
     offset = 0
 
 
-class NoteOrderingFactory(factory.Factory):
+class NoteOrderingFactory(BaseFactory[values.NoteOrdering]):
     class Meta:
         model = values.NoteOrdering
 
