@@ -1,4 +1,5 @@
 import abc
+import enum
 from typing import Any
 
 from pydantic import BaseModel, validator
@@ -7,7 +8,7 @@ from pydantic import BaseModel, validator
 class Value(abc.ABC, BaseModel):  # noqa: WPS110
     """Base class for all value objects."""
 
-    class Config:  # noqa WPS431
+    class Config:  # noqa: WPS431 D106
         extra = 'forbid'  # Forbid to pass unnecessary kwargs to constructor.
 
 
@@ -33,3 +34,10 @@ class ErrorValue(Value):
     """Value for `validation_error_exception_handler`."""
 
     detail: list[dict[str, Any]]
+
+
+class OrderingType(enum.Enum):
+    """Value for descending/ascending ordering."""
+
+    ascending = 'ascending'
+    descending = 'descending'

@@ -12,3 +12,9 @@ class NoteValue(values.Value):
 
     text: str
     tags: list[TagValue]
+
+
+class NoteOrdering(values.Value):
+    """Value for ordering read notes result by fields."""
+
+    created_at: values.OrderingType

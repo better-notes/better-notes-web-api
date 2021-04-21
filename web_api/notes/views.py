@@ -1,5 +1,5 @@
 from fastapi import APIRouter
-from fastapi.param_functions import Cookie
+from fastapi.param_functions import Cookie, Depends
 
 from web_api.accounts.dependencies import ACCOUNT_SESSION_INTERACTOR_DEPENDENCY
 from web_api.accounts.usecases import AccountSessionInteractor
@@ -36,6 +36,7 @@ async def create_notes(
 
 @router.get('/note/read/', response_model=list[entities.NoteEntity])
 async def read_notes(
+    ordering: values.NoteOrdering = Depends(values.NoteOrdering),
     paging: Paging = PAGING_DEPENDENCY,
     note_interactor: usecases.NoteInteractor = NOTE_INTERACTOR_DEPENDENCY,
     authentication_token: str = Cookie(...),
@@ -52,7 +53,9 @@ async def read_notes(
         authentication_token_value=authentication_token_value,
     )
     return await note_interactor.get(
-        account_entity=account_session_entity.account, paging=paging,
+        account_entity=account_session_entity.account,
+        paging=paging,
+        ordering=ordering,
     )
 
 

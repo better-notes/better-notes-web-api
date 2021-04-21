@@ -41,3 +41,10 @@ class PagingFactory(factory.Factory):
 
     limit = 10
     offset = 0
+
+
+class NoteOrderingFactory(factory.Factory):
+    class Meta:
+        model = values.NoteOrdering
+
+    created_at = OrderingType.ascending

@@ -55,7 +55,10 @@ class TestNoteAPI:
         )
 
         response = await client.get(
-            '{0}{1}'.format(reverse_route('read_notes'), '?limit=10&offset=0'),
+            '{0}{1}'.format(
+                reverse_route('read_notes'),
+                '?limit=10&offset=0&created_at=ascending',
+            ),
             cookies={
                 'authentication_token': account_session_entity.token.value,
             },
