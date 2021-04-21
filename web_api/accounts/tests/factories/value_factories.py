@@ -1,13 +1,14 @@
-import factory
-
 from web_api.accounts.values import (
     AccountValue,
     AuthenticationCredentialsValue,
     RegistrationCredentialsValue,
 )
+from web_api.commons.tests.factories import BaseFactory
 
 
-class RegistrationCredentialsValueFactory(factory.Factory):
+class RegistrationCredentialsValueFactory(
+    BaseFactory[RegistrationCredentialsValue],
+):
     class Meta:
         model = RegistrationCredentialsValue
 
@@ -16,7 +17,9 @@ class RegistrationCredentialsValueFactory(factory.Factory):
     password2 = 'test_password'
 
 
-class AuthenticationCredentialsValueFactory(factory.Factory):
+class AuthenticationCredentialsValueFactory(
+    BaseFactory[AuthenticationCredentialsValue],
+):
     class Meta:
         model = AuthenticationCredentialsValue
 
@@ -24,7 +27,7 @@ class AuthenticationCredentialsValueFactory(factory.Factory):
     password = 'test_password'  # noqa: S105
 
 
-class AccountValueFactory(factory.Factory):
+class AccountValueFactory(BaseFactory[AccountValue]):
     class Meta:
         model = AccountValue
 

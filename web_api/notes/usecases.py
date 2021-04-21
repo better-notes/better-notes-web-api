@@ -7,7 +7,7 @@ from web_api.commons.values import Paging
 from web_api.notes import specs
 from web_api.notes.entities import NoteEntity
 from web_api.notes.repositories import NoteRepository
-from web_api.notes.values import NoteValue
+from web_api.notes.values import NoteOrdering, NoteValue
 
 
 @dataclasses.dataclass
@@ -28,12 +28,17 @@ class NoteInteractor:
         )
 
     async def get(
-        self, *, account_entity: AccountEntity, paging: Paging,
+        self,
+        *,
+        account_entity: AccountEntity,
+        paging: Paging,
+        ordering: NoteOrdering,
     ) -> list[NoteEntity]:
         """Return all notes."""
         return await self.note_repository.get(
             spec=specs.GetNoteSpecification(username=account_entity.username),
             paging=paging,
+            ordering=ordering,
         )
 
     async def update(

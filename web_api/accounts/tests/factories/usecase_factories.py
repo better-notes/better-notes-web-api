@@ -11,10 +11,10 @@ from web_api.accounts.usecases import (
     AccountRegisterUseCase,
     AccountSessionInteractor,
 )
-from web_api.commons.tests.factories import AsyncFactory
+from web_api.commons.tests.factories import AsyncFactory, BaseFactory
 
 
-class AccountRegisterUseCaseFactory(factory.Factory):
+class AccountRegisterUseCaseFactory(BaseFactory[AccountRegisterUseCase]):
     class Meta:
         model = AccountRegisterUseCase
 
@@ -22,7 +22,9 @@ class AccountRegisterUseCaseFactory(factory.Factory):
     hasher = factory.LazyFunction(lambda: bcrypt)
 
 
-class AccountSessionInteractorFactory(AsyncFactory):
+class AccountSessionInteractorFactory(
+    BaseFactory[AccountSessionInteractor], AsyncFactory,
+):
     class Meta:
         model = AccountSessionInteractor
 

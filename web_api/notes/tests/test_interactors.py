@@ -33,7 +33,9 @@ class TestNoteInteractor:
             account_entity=account_entity, note_value_list=note_list,
         )
         note_entity_list = await interactor.get(
-            account_entity=account_entity, paging=factories.PagingFactory(),
+            account_entity=account_entity,
+            paging=factories.PagingFactory(),
+            ordering=factories.NoteOrderingFactory(),
         )
         # Then
         assert jsonable_encoder(note_entity_list) == snapshot(
@@ -54,7 +56,9 @@ class TestNoteInteractor:
             account_entity=account_entity, note_entity_list=entity_list,
         )
         entity_list = await interactor.get(
-            account_entity=account_entity, paging=factories.PagingFactory(),
+            account_entity=account_entity,
+            paging=factories.PagingFactory(),
+            ordering=factories.NoteOrderingFactory(),
         )
         # Then
         assert entity_list[0].text == 'New text'
@@ -70,7 +74,9 @@ class TestNoteInteractor:
         )
         # Ensure:
         note_entity_list = await interactor.get(
-            account_entity=account_entity, paging=factories.PagingFactory(),
+            account_entity=account_entity,
+            paging=factories.PagingFactory(),
+            ordering=factories.NoteOrderingFactory(),
         )
         assert note_entity_list != []
 
@@ -80,6 +86,8 @@ class TestNoteInteractor:
         )
         # Then
         note_entity_list = await interactor.get(
-            account_entity=account_entity, paging=factories.PagingFactory(),
+            account_entity=account_entity,
+            paging=factories.PagingFactory(),
+            ordering=factories.NoteOrderingFactory(),
         )
         assert note_entity_list == []

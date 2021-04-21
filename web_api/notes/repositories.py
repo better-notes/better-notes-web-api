@@ -1,12 +1,13 @@
 import dataclasses
 from datetime import datetime, timezone
 
+import pymongo
 from motor import motor_asyncio
 from pymongo.results import InsertOneResult
 
 from web_api.accounts.entities import AccountEntity
 from web_api.commons.repositories import AbstractRepository
-from web_api.commons.values import Paging
+from web_api.commons.values import OrderingType, Paging
 from web_api.notes import entities, values
 from web_api.notes.specs import NoteSpecification
 from web_api.settings import Settings
@@ -19,10 +20,15 @@ class NoteRepository(AbstractRepository):
     client: motor_asyncio.AsyncIOMotorClient
     settings: Settings
 
-    def __post_init__(self) -> None:
-        """Initialize mongo client."""
-        db = self.client[self.settings.mongo_database]
-        self.notes_collection = db['notes']
+    @property
+    def db(self) -> motor_asyncio.AsyncIOMotorDatabase:
+        """Mongo database instance."""
+        return self.client[self.settings.mongo_database]
+
+    @property
+    def notes_collection(self) -> motor_asyncio.AsyncIOMotorCollection:
+        """Accounts collection instalce."""
+        return self.db[self.settings.notes_collection]
 
     async def add(
         self,
@@ -57,10 +63,16 @@ class NoteRepository(AbstractRepository):
         return inserted_entities
 
     async def get(
-        self, *, spec: NoteSpecification, paging: Paging,
+        self,
+        *,
+        spec: NoteSpecification,
+        paging: Paging,
+        ordering: values.NoteOrdering,
     ) -> list[entities.NoteEntity]:
         """Return notes for given spec."""
-        cursor = self.notes_collection.find(spec.get_query())
+        cursor = self.notes_collection.find(spec.get_query()).sort(
+            self._get_sorting(ordering=ordering),
+        )
 
         raw_note_list = cursor.limit(paging.limit).skip(paging.offset)
         note_list = []
@@ -87,3 +99,23 @@ class NoteRepository(AbstractRepository):
             spec.get_query(),
         )
         return delete_result.deleted_count
+
+    def _get_sorting(
+        self, ordering: values.NoteOrdering,
+    ) -> list[tuple[str, int]]:
+        # TODO: move this to ordering value maybe 🤔.
+        sorting = []
+
+        for field, ordering_type in ordering.dict().items():
+            if ordering_type == OrderingType.ascending:
+                pymongo_ordering_type = pymongo.ASCENDING
+            elif ordering_type == OrderingType.descending:
+                pymongo_ordering_type = pymongo.DESCENDING
+            else:
+                raise ValueError(
+                    'Unknown ordering type {0}'.format(ordering_type),
+                )
+
+            sorting.append((field, pymongo_ordering_type))
+
+        return sorting

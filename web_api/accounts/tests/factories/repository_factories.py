@@ -6,13 +6,14 @@ from web_api.accounts.repositories import (
 )
 from web_api.commons.tests.factories import (
     AsyncFactory,
+    BaseFactory,
     MotorClientFactory,
     RedisPoolFactory,
     SettingsFactory,
 )
 
 
-class AccountRepositoryFactory(factory.Factory):
+class AccountRepositoryFactory(BaseFactory[AccountRepository]):
     class Meta:
         model = AccountRepository
 
@@ -20,7 +21,9 @@ class AccountRepositoryFactory(factory.Factory):
     settings = factory.SubFactory(SettingsFactory)
 
 
-class AccountSessionRepositoryFactory(AsyncFactory):
+class AccountSessionRepositoryFactory(
+    BaseFactory[AccountSessionRepository], AsyncFactory,
+):
     class Meta:
         model = AccountSessionRepository
 
