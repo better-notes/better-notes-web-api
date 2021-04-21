@@ -71,7 +71,7 @@ class NoteRepository(AbstractRepository):
     ) -> list[entities.NoteEntity]:
         """Return notes for given spec."""
         cursor = self.notes_collection.find(spec.get_query()).sort(
-            self._get_sotring(ordering=ordering),
+            self._get_sorting(ordering=ordering),
         )
 
         raw_note_list = cursor.limit(paging.limit).skip(paging.offset)
@@ -100,9 +100,10 @@ class NoteRepository(AbstractRepository):
         )
         return delete_result.deleted_count
 
-    def _get_sotring(
+    def _get_sorting(
         self, ordering: values.NoteOrdering,
     ) -> list[tuple[str, int]]:
+        # TODO: move this to ordering value maybe 🤔.
         sorting = []
 
         for field, ordering_type in ordering.dict().items():
