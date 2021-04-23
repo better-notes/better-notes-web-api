@@ -2,11 +2,13 @@ from fastapi import status
 from syrupy.filters import props
 
 from web_api.accounts.dependencies import get_account_session_id_generator
+from web_api.accounts.repositories import AccountRepository
 from web_api.accounts.tests.factories.repository_factories import (
     AccountRepositoryFactory,
 )
 from web_api.accounts.tests.factories.usecase_factories import (
     AccountRegisterUseCaseFactory,
+    AccountSessionInteractorFactory,
 )
 from web_api.accounts.tests.factories.value_factories import (
     AccountValueFactory,
@@ -76,4 +78,24 @@ async def test_authenticate(client, app, reverse_route, snapshot):
     )
 
     assert dict(response.cookies) == snapshot
+    assert response.status_code == status.HTTP_200_OK
+
+
+async def test_profile(client, reverse_route, snapshot):
+    account_repository: AccountRepository = AccountRepositoryFactory()
+    account_session_interactor = await AccountSessionInteractorFactory()
+
+    account_entities = await account_repository.add(
+        account_value_list=[AccountValueFactory(username='test username')],
+    )
+    account_session_entity = await account_session_interactor.add(
+        account_entity=account_entities[0],
+    )
+
+    response = await client.get(
+        reverse_route('profile'),
+        cookies={'authentication_token': account_session_entity.token.value},
+    )
+
+    assert response.json() == snapshot(exclude=props('created_at', 'id_'))
     assert response.status_code == status.HTTP_200_OK
