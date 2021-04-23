@@ -3,6 +3,11 @@
     'authentication_token': 'session_id',
   }
 ---
+# name: test_profile
+  <class 'dict'> {
+    'username': 'test username',
+  }
+---
 # name: test_register
   <class 'dict'> {
     'authentication_token': 'session_id',
