@@ -7,9 +7,9 @@ from pymongo.results import InsertOneResult
 
 from web_api.accounts.entities import AccountEntity
 from web_api.commons.repositories import AbstractRepository
+from web_api.commons.specs import Specification
 from web_api.commons.values import OrderingType, Paging
 from web_api.notes import entities, values
-from web_api.notes.specs import NoteSpecification
 from web_api.settings import Settings
 
 
@@ -65,7 +65,7 @@ class NoteRepository(AbstractRepository):
     async def get(
         self,
         *,
-        spec: NoteSpecification,
+        spec: Specification,
         paging: Paging,
         ordering: values.NoteOrdering,
     ) -> list[entities.NoteEntity]:
@@ -83,7 +83,7 @@ class NoteRepository(AbstractRepository):
         return note_list
 
     async def update(
-        self, *, spec: NoteSpecification, note_value: values.NoteValue,
+        self, *, spec: Specification, note_value: values.NoteValue,
     ) -> int:
         """Update notes using spec. Return updated amount."""
         note_value_dict = note_value.dict()
@@ -93,7 +93,7 @@ class NoteRepository(AbstractRepository):
         )
         return update_result.modified_count
 
-    async def delete(self, *, spec: NoteSpecification) -> int:
+    async def delete(self, *, spec: Specification) -> int:
         """Delete notes using spec. Return deleted amount."""
         delete_result = await self.notes_collection.delete_many(
             spec.get_query(),

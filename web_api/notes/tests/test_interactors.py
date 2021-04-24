@@ -36,11 +36,35 @@ class TestNoteInteractor:
             account_entity=account_entity,
             paging=factories.PagingFactory(),
             ordering=factories.NoteOrderingFactory(),
+            tag_value_list=[],
         )
         # Then
         assert jsonable_encoder(note_entity_list) == snapshot(
             exclude=props('id_', 'created_at'),
         )
+
+    async def test_get_by_tags(self, snapshot) -> None:
+        # Given
+        account_entity = await self.get_account_entity()
+        search_tag = factories.TagValueFactory(name='search tag')
+        note_list = []
+        note_list.append(factories.NoteValueFactory())
+        note_list.append(factories.NoteValueFactory(tags=[search_tag]))
+        # And
+        interactor = factories.NoteInteractorFactory()
+        # When
+        await interactor.add(
+            account_entity=account_entity, note_value_list=note_list,
+        )
+        note_entity_list = await interactor.get(
+            account_entity=account_entity,
+            paging=factories.PagingFactory(),
+            ordering=factories.NoteOrderingFactory(),
+            tag_value_list=[search_tag],
+        )
+        # Then
+        assert len(note_entity_list) == 1
+        assert note_entity_list[0].tags == [search_tag]
 
     async def test_update(self) -> None:
         # Given
@@ -59,6 +83,7 @@ class TestNoteInteractor:
             account_entity=account_entity,
             paging=factories.PagingFactory(),
             ordering=factories.NoteOrderingFactory(),
+            tag_value_list=[],
         )
         # Then
         assert entity_list[0].text == 'New text'
@@ -77,6 +102,7 @@ class TestNoteInteractor:
             account_entity=account_entity,
             paging=factories.PagingFactory(),
             ordering=factories.NoteOrderingFactory(),
+            tag_value_list=[],
         )
         assert note_entity_list != []
 
@@ -89,5 +115,6 @@ class TestNoteInteractor:
             account_entity=account_entity,
             paging=factories.PagingFactory(),
             ordering=factories.NoteOrderingFactory(),
+            tag_value_list=[],
         )
         assert note_entity_list == []

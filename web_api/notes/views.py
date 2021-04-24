@@ -35,20 +35,19 @@ async def create_notes(
 
 
 @router.get('/note/read/', response_model=list[entities.NoteEntity])
-async def read_notes(
+async def read_notes(  # noqa: WPS211 # Too many args.
     ordering: values.NoteOrdering = Depends(values.NoteOrdering),
-    paging: Paging = PAGING_DEPENDENCY,
-    note_interactor: usecases.NoteInteractor = NOTE_INTERACTOR_DEPENDENCY,
-    authentication_token: str = Cookie(...),
-    account_session_interactor: AccountSessionInteractor = (
-        ACCOUNT_SESSION_INTERACTOR_DEPENDENCY
+    paging: Paging = Depends(get_paging),
+    tag_value_list: list[values.TagValue] = Depends(get_tag_value_list),
+    note_interactor: usecases.NoteInteractor = Depends(get_note_interactor),
+    authentication_token_value: AuthenticationTokenValue = Depends(
+        get_authentication_token_value,
+    ),
+    account_session_interactor: AccountSessionInteractor = Depends(
+        get_account_session_interactor,
     ),
 ) -> list[entities.NoteEntity]:
     """Get all notes from db."""
-    # TODO: add filtration by id or something
-    authentication_token_value = AuthenticationTokenValue(
-        value=authentication_token,
-    )
     account_session_entity = await account_session_interactor.get(
         authentication_token_value=authentication_token_value,
     )
@@ -56,6 +55,7 @@ async def read_notes(
         account_entity=account_session_entity.account,
         paging=paging,
         ordering=ordering,
+        tag_value_list=tag_value_list,
     )
 
 
