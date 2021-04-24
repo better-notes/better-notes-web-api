@@ -40,7 +40,7 @@ class NoteInteractorFactory(BaseFactory[usecases.NoteInteractor]):
     note_repository = factory.SubFactory(NoteRepositoryFactory)
 
 
-class PagingFactory(factory.Factory):
+class PagingFactory(BaseFactory[commons.values.Paging]):
     class Meta:
         model = commons.values.Paging
 
