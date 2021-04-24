@@ -103,6 +103,13 @@ pyflakes = ["+*"]
 "flake8-*" = [
     "-B008",  # Do not perform function calls in argument defaults | Same thing as WPS404 above. Depends, Cookie(), Param().
 ]
+[tool.flakehell.exceptions."**/dependencies*"]
+"wemake-python-styleguide" = [
+    "-WPS404",  # Found complex default value | Depends(), Cookie(), Param() - all valid defaults in fastapi. We know what we doing.
+]
+"flake8-*" = [
+    "-B008",  # Do not perform function calls in argument defaults | Same thing as WPS404 above. Depends, Cookie(), Param().
+]
 
 [tool.coverage.run]
 omit = ["*/tests/*"]

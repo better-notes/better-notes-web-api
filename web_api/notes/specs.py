@@ -4,6 +4,7 @@ from typing import Any
 import bson
 
 from web_api.commons.specs import Specification
+from web_api.notes.values import TagValue
 
 
 @dataclasses.dataclass
@@ -25,6 +26,19 @@ class GetNoteSpecification(NoteSpecification):
     def get_query(self) -> dict[str, Any]:
         """Get username filtered query."""
         return {'account.username': self.username}
+
+
+@dataclasses.dataclass
+class GetNoteByTagsSpecification(NoteSpecification):
+    """Return all notes with given tags."""
+
+    tag_value_list: list[TagValue]
+
+    def get_query(self) -> dict[str, Any]:
+        """Get query matching documents with all given tags."""
+        tags = [tag_value.dict() for tag_value in self.tag_value_list]
+
+        return {'tags': {'$all': tags}}
 
 
 @dataclasses.dataclass

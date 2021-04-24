@@ -1,7 +1,9 @@
 from fastapi import status
 from syrupy.filters import props
 
-from web_api.accounts.dependencies import get_account_session_id_generator
+from web_api.accounts.dependencies.usecases import (
+    get_account_session_id_generator,
+)
 from web_api.accounts.repositories import AccountRepository
 from web_api.accounts.tests.factories.repository_factories import (
     AccountRepositoryFactory,

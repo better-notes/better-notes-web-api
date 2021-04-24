@@ -5,23 +5,21 @@ from web_api.commons.values import Paging
 from web_api.settings import Settings
 
 
-def _get_settings():
+def get_settings():
+    """Get settings."""
     return Settings()
 
 
-SETTINGS_DEPENDENCY = Depends(_get_settings)
-
-
-async def _get_mongo_client(
-    settings: Settings = SETTINGS_DEPENDENCY,
+async def get_mongo_client(
+    settings: Settings = Depends(get_settings),
 ) -> motor_asyncio.AsyncIOMotorClient:
+    """Get mongo client."""
     # XXX: async b/c motor client requires loop for instantiation ¯\_(ツ)_/¯
     return motor_asyncio.AsyncIOMotorClient(
         settings.mongo_host, settings.mongo_port,
     )
 
 
-MONGO_CLIENT_DEPENDENCY = Depends(_get_mongo_client)
-
-
-PAGING_DEPENDENCY = Depends(Paging)
+async def get_paging(limit: int, offset: int) -> Paging:
+    """Get paging from query params."""
+    return Paging(limit=limit, offset=offset)

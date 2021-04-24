@@ -3,11 +3,12 @@ import dataclasses
 import bson
 
 from web_api.accounts.entities import AccountEntity
+from web_api.commons.specs import merge_specs
 from web_api.commons.values import Paging
 from web_api.notes import specs
 from web_api.notes.entities import NoteEntity
 from web_api.notes.repositories import NoteRepository
-from web_api.notes.values import NoteOrdering, NoteValue
+from web_api.notes.values import NoteOrdering, NoteValue, TagValue
 
 
 @dataclasses.dataclass
@@ -33,12 +34,21 @@ class NoteInteractor:
         account_entity: AccountEntity,
         paging: Paging,
         ordering: NoteOrdering,
+        tag_value_list: list[TagValue],
     ) -> list[NoteEntity]:
         """Return all notes."""
+        if tag_value_list:
+            spec = merge_specs(
+                specs.GetNoteSpecification(username=account_entity.username),
+                specs.GetNoteByTagsSpecification(
+                    tag_value_list=tag_value_list,
+                ),
+            )
+        else:
+            spec = specs.GetNoteSpecification(username=account_entity.username)
+
         return await self.note_repository.get(
-            spec=specs.GetNoteSpecification(username=account_entity.username),
-            paging=paging,
-            ordering=ordering,
+            spec=spec, paging=paging, ordering=ordering,
         )
 
     async def update(

@@ -1,13 +1,17 @@
-from fastapi import APIRouter
-from fastapi.param_functions import Cookie, Depends
+from fastapi import APIRouter, Depends
 
-from web_api.accounts.dependencies import ACCOUNT_SESSION_INTERACTOR_DEPENDENCY
+from web_api.accounts.dependencies.requests import (
+    get_authentication_token_value,
+)
+from web_api.accounts.dependencies.usecases import (
+    get_account_session_interactor,
+)
 from web_api.accounts.usecases import AccountSessionInteractor
 from web_api.accounts.values import AuthenticationTokenValue
-from web_api.commons.dependencies import PAGING_DEPENDENCY
+from web_api.commons.dependencies import get_paging
 from web_api.commons.values import Paging
 from web_api.notes import entities, usecases, values
-from web_api.notes.dependencies import NOTE_INTERACTOR_DEPENDENCY
+from web_api.notes.dependencies import get_note_interactor, get_tag_value_list
 
 router = APIRouter()
 
@@ -15,16 +19,15 @@ router = APIRouter()
 @router.post('/note/create/', response_model=list[entities.NoteEntity])
 async def create_notes(
     note_values: list[values.NoteValue],
-    authentication_token: str = Cookie(...),
-    note_interactor: usecases.NoteInteractor = NOTE_INTERACTOR_DEPENDENCY,
-    account_session_interactor: AccountSessionInteractor = (
-        ACCOUNT_SESSION_INTERACTOR_DEPENDENCY
+    authentication_token_value: AuthenticationTokenValue = Depends(
+        get_authentication_token_value,
+    ),
+    note_interactor: usecases.NoteInteractor = Depends(get_note_interactor),
+    account_session_interactor: AccountSessionInteractor = Depends(
+        get_account_session_interactor,
     ),
 ) -> list[entities.NoteEntity]:
     """Add notes into db. Return added notes."""
-    authentication_token_value = AuthenticationTokenValue(
-        value=authentication_token,
-    )
     account_session_entity = await account_session_interactor.get(
         authentication_token_value=authentication_token_value,
     )
@@ -35,20 +38,19 @@ async def create_notes(
 
 
 @router.get('/note/read/', response_model=list[entities.NoteEntity])
-async def read_notes(
+async def read_notes(  # noqa: WPS211 # Too many args.
     ordering: values.NoteOrdering = Depends(values.NoteOrdering),
-    paging: Paging = PAGING_DEPENDENCY,
-    note_interactor: usecases.NoteInteractor = NOTE_INTERACTOR_DEPENDENCY,
-    authentication_token: str = Cookie(...),
-    account_session_interactor: AccountSessionInteractor = (
-        ACCOUNT_SESSION_INTERACTOR_DEPENDENCY
+    paging: Paging = Depends(get_paging),
+    tag_value_list: list[values.TagValue] = Depends(get_tag_value_list),
+    note_interactor: usecases.NoteInteractor = Depends(get_note_interactor),
+    authentication_token_value: AuthenticationTokenValue = Depends(
+        get_authentication_token_value,
+    ),
+    account_session_interactor: AccountSessionInteractor = Depends(
+        get_account_session_interactor,
     ),
 ) -> list[entities.NoteEntity]:
     """Get all notes from db."""
-    # TODO: add filtration by id or something
-    authentication_token_value = AuthenticationTokenValue(
-        value=authentication_token,
-    )
     account_session_entity = await account_session_interactor.get(
         authentication_token_value=authentication_token_value,
     )
@@ -56,22 +58,22 @@ async def read_notes(
         account_entity=account_session_entity.account,
         paging=paging,
         ordering=ordering,
+        tag_value_list=tag_value_list,
     )
 
 
 @router.put('/note/update/', response_model=list[entities.NoteEntity])
 async def update_notes(
     note_entities: list[entities.NoteEntity],
-    note_interactor: usecases.NoteInteractor = NOTE_INTERACTOR_DEPENDENCY,
-    authentication_token: str = Cookie(...),
-    account_session_interactor: AccountSessionInteractor = (
-        ACCOUNT_SESSION_INTERACTOR_DEPENDENCY
+    note_interactor: usecases.NoteInteractor = Depends(get_note_interactor),
+    authentication_token_value: AuthenticationTokenValue = Depends(
+        get_authentication_token_value,
+    ),
+    account_session_interactor: AccountSessionInteractor = Depends(
+        get_account_session_interactor,
     ),
 ) -> list[entities.NoteEntity]:
     """Update notes using id. Return updated notes."""
-    authentication_token_value = AuthenticationTokenValue(
-        value=authentication_token,
-    )
     account_session_entity = await account_session_interactor.get(
         authentication_token_value=authentication_token_value,
     )
@@ -84,16 +86,15 @@ async def update_notes(
 @router.post('/note/delete/', response_model=list[entities.NoteEntity])
 async def delete_notes(
     note_entities: list[entities.NoteEntity],
-    note_interactor: usecases.NoteInteractor = NOTE_INTERACTOR_DEPENDENCY,
-    authentication_token: str = Cookie(...),
-    account_session_interactor: AccountSessionInteractor = (
-        ACCOUNT_SESSION_INTERACTOR_DEPENDENCY
+    note_interactor: usecases.NoteInteractor = Depends(get_note_interactor),
+    authentication_token_value: AuthenticationTokenValue = Depends(
+        get_authentication_token_value,
+    ),
+    account_session_interactor: AccountSessionInteractor = Depends(
+        get_account_session_interactor,
     ),
 ) -> list[entities.NoteEntity]:
     """Delete notes using id. Return deleted notes."""
-    authentication_token_value = AuthenticationTokenValue(
-        value=authentication_token,
-    )
     account_session_entity = await account_session_interactor.get(
         authentication_token_value=authentication_token_value,
     )

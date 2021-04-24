@@ -1,28 +1,36 @@
 from fastapi import Depends
+from fastapi.param_functions import Query
 from motor import motor_asyncio
 
-from web_api.commons.dependencies import (
-    MONGO_CLIENT_DEPENDENCY,
-    SETTINGS_DEPENDENCY,
-)
+from web_api.commons.dependencies import get_mongo_client, get_settings
 from web_api.notes import repositories, usecases
+from web_api.notes.values import TagValue
 from web_api.settings import Settings
 
 
-def _get_note_repository(
-    client: motor_asyncio.AsyncIOMotorClient = MONGO_CLIENT_DEPENDENCY,
-    settings: Settings = SETTINGS_DEPENDENCY,
+def get_note_repository(
+    client: motor_asyncio.AsyncIOMotorClient = Depends(get_mongo_client),
+    settings: Settings = Depends(get_settings),
 ) -> repositories.NoteRepository:
+    """Get note repository."""
     return repositories.NoteRepository(client=client, settings=settings)
 
 
-NOTE_REPOSITORY_DEPENDENCY = Depends(_get_note_repository)
-
-
-def _get_note_interactor(
-    note_repository: repositories.NoteRepository = NOTE_REPOSITORY_DEPENDENCY,
+def get_note_interactor(
+    note_repository: repositories.NoteRepository = Depends(
+        get_note_repository,
+    ),
 ) -> usecases.NoteInteractor:
+    """Get note interactor."""
     return usecases.NoteInteractor(note_repository=note_repository)
 
 
-NOTE_INTERACTOR_DEPENDENCY = Depends(_get_note_interactor)
+def get_tag_value_list(
+    tags: list[str] = Query([], alias='tag'),
+) -> list[TagValue]:
+    """Get tag values from query params."""
+    tag_value_list = []
+    for tag in tags:
+        tag_value_list.append(TagValue(name=tag))
+
+    return tag_value_list
