@@ -1,0 +1,4 @@
+notes:
+  hosts:
+    notes.wintercitizen.xyz:
+      ansible_python_interpreter: python3

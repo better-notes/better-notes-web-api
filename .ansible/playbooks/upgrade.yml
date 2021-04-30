@@ -1,0 +1,9 @@
+- name: upgrade notes host packages
+  hosts: notes
+  become: yes
+
+  tasks:
+    - name: full system upgrade
+      apt:
+        update_cache: yes
+        upgrade: yes
