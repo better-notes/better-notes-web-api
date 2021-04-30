@@ -1,0 +1,27 @@
+version: "3.8"
+
+services:
+  mongo:
+    image: mongo:latest
+    volumes:
+      - mongo:/data/db
+
+  redis:
+    image: redis:latest
+
+  app:
+    build:
+      context: .
+
+    environment:
+      MONGO_HOST: mongo
+      MONGO_PORT: 27017
+      MONGO_DATABASE: better_notes
+
+      REDIS_ADDRESS: redis://redis:6379
+
+    ports:
+      - 80:8000
+
+volumes:
+  mongo:

@@ -1,0 +1,17 @@
+- name: Pull better notes web api repository
+  hosts: notes
+
+  tasks:
+    - name: pull repo
+      git:
+        repo: https://github.com/better-notes/better-notes-web-api.git
+        dest: ~/projects/better-notes-web-api
+        update: yes
+        version: feature/ansible
+
+    - name: start compose services
+      docker_compose:
+        project_src: ~/projects/better-notes-web-api
+        build: yes
+        files:
+          - docker-compose.stage.yml
