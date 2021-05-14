@@ -125,7 +125,7 @@ class AccountRepository(AbstractRepository):
 
 @dataclasses.dataclass
 class AccountSessionNotFoundError(HTTPException):
-    """Raised when trying to create account w/ already existing username."""
+    """Raised when account session with given id doesn't exist in store."""
 
     status_code: int = status.HTTP_404_NOT_FOUND
     detail: str = 'Account session with given id was not found.'
