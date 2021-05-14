@@ -2,12 +2,10 @@ from fastapi.encoders import jsonable_encoder
 from syrupy.filters import props
 
 from web_api.accounts.entities import AccountSessionEntity
-from web_api.accounts.tests.factories.repository_factories import (
+from web_api.accounts.tests.factories.repositories import (
     AccountRepositoryFactory,
 )
-from web_api.accounts.tests.factories.value_factories import (
-    AccountValueFactory,
-)
+from web_api.accounts.tests.factories.values import AccountValueFactory
 from web_api.notes.tests import factories
 
 

@@ -124,6 +124,14 @@ class AccountRepository(AbstractRepository):
 
 
 @dataclasses.dataclass
+class AccountSessionNotFoundError(HTTPException):
+    """Raised when account session with given id doesn't exist in store."""
+
+    status_code: int = status.HTTP_404_NOT_FOUND
+    detail: str = 'Account session with given id was not found.'
+
+
+@dataclasses.dataclass
 class AccountSessionRepository(AbstractRepository):
     """Repository for account sessions."""
 
@@ -154,6 +162,10 @@ class AccountSessionRepository(AbstractRepository):
             entity_json = await self.client.get(
                 authentication_token_value.value,
             )
+
+            if entity_json is None:
+                raise AccountSessionNotFoundError()
+
             account_session_entity_list.append(
                 entities.AccountSessionEntity.parse_raw(entity_json),
             )
