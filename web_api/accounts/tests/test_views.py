@@ -5,14 +5,14 @@ from web_api.accounts.dependencies.usecases import (
     get_account_session_id_generator,
 )
 from web_api.accounts.repositories import AccountRepository
-from web_api.accounts.tests.factories.repository_factories import (
+from web_api.accounts.tests.factories.repositories import (
     AccountRepositoryFactory,
 )
-from web_api.accounts.tests.factories.usecase_factories import (
+from web_api.accounts.tests.factories.usecases import (
     AccountRegisterUseCaseFactory,
     AccountSessionInteractorFactory,
 )
-from web_api.accounts.tests.factories.value_factories import (
+from web_api.accounts.tests.factories.values import (
     AccountValueFactory,
     AuthenticationCredentialsValueFactory,
     RegistrationCredentialsValueFactory,

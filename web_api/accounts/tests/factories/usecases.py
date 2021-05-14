@@ -3,7 +3,7 @@ import secrets
 import factory
 from passlib.hash import bcrypt  # type: ignore
 
-from web_api.accounts.tests.factories.repository_factories import (
+from web_api.accounts.tests.factories.repositories import (
     AccountRepositoryFactory,
     AccountSessionRepositoryFactory,
 )
