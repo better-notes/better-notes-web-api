@@ -2,9 +2,7 @@ from fastapi.encoders import jsonable_encoder
 from syrupy.filters import props
 
 from web_api.accounts.entities import AccountEntity
-from web_api.accounts.tests.factories.repositories import (
-    AccountRepositoryFactory,
-)
+from web_api.accounts.tests.factories.repositories import AccountRepositoryFactory
 from web_api.accounts.tests.factories.values import AccountValueFactory
 from web_api.notes.tests import factories
 
@@ -14,9 +12,7 @@ class TestNoteInteractor:
         account_value = AccountValueFactory()
         account_repository = AccountRepositoryFactory()
 
-        account_entities = await account_repository.add(
-            account_value_list=[account_value],
-        )
+        account_entities = await account_repository.add(account_value_list=[account_value])
 
         return account_entities[0]
 
@@ -37,9 +33,7 @@ class TestNoteInteractor:
             tag_value_list=[],
         )
         # Then
-        assert jsonable_encoder(note_entity_list) == snapshot(
-            exclude=props('id_', 'created_at'),
-        )
+        assert jsonable_encoder(note_entity_list) == snapshot(exclude=props('id_', 'created_at'))
 
     async def test_get_by_tags(self, snapshot) -> None:
         # Given

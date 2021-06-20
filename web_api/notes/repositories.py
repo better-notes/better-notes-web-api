@@ -31,10 +31,7 @@ class NoteRepository(AbstractRepository):
         return self.db[self.settings.notes_collection]
 
     async def add(
-        self,
-        *,
-        account_entity: AccountEntity,
-        note_value_list: list[values.NoteValue],
+        self, *, account_entity: AccountEntity, note_value_list: list[values.NoteValue],
     ) -> list[entities.NoteEntity]:
         """Add notes into db. Return added notes."""
         inserted_entities = []
@@ -63,11 +60,7 @@ class NoteRepository(AbstractRepository):
         return inserted_entities
 
     async def get(
-        self,
-        *,
-        spec: Specification,
-        paging: Paging,
-        ordering: values.NoteOrdering,
+        self, *, spec: Specification, paging: Paging, ordering: values.NoteOrdering,
     ) -> list[entities.NoteEntity]:
         """Return notes for given spec."""
         cursor = self.notes_collection.find(spec.get_query()).sort(
@@ -77,14 +70,10 @@ class NoteRepository(AbstractRepository):
         raw_note_list = cursor.limit(paging.limit).skip(paging.offset)
         note_list = []
         async for note in raw_note_list:
-            note_list.append(
-                entities.NoteEntity(id_=str(note.pop('_id')), **note),
-            )
+            note_list.append(entities.NoteEntity(id_=str(note.pop('_id')), **note))
         return note_list
 
-    async def update(
-        self, *, spec: Specification, note_value: values.NoteValue,
-    ) -> int:
+    async def update(self, *, spec: Specification, note_value: values.NoteValue) -> int:
         """Update notes using spec. Return updated amount."""
         note_value_dict = note_value.dict()
 
@@ -95,14 +84,10 @@ class NoteRepository(AbstractRepository):
 
     async def delete(self, *, spec: Specification) -> int:
         """Delete notes using spec. Return deleted amount."""
-        delete_result = await self.notes_collection.delete_many(
-            spec.get_query(),
-        )
+        delete_result = await self.notes_collection.delete_many(spec.get_query())
         return delete_result.deleted_count
 
-    def _get_sorting(
-        self, ordering: values.NoteOrdering,
-    ) -> list[tuple[str, int]]:
+    def _get_sorting(self, ordering: values.NoteOrdering) -> list[tuple[str, int]]:
         # TODO: move this to ordering value maybe 🤔.
         sorting = []
 
@@ -112,9 +97,7 @@ class NoteRepository(AbstractRepository):
             elif ordering_type == OrderingType.descending:
                 pymongo_ordering_type = pymongo.DESCENDING
             else:
-                raise ValueError(
-                    'Unknown ordering type {0}'.format(ordering_type),
-                )
+                raise ValueError('Unknown ordering type {0}'.format(ordering_type))
 
             sorting.append((field, pymongo_ordering_type))
 

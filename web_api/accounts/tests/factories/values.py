@@ -6,9 +6,7 @@ from web_api.accounts.values import (
 from web_api.commons.tests.factories import BaseFactory
 
 
-class RegistrationCredentialsValueFactory(
-    BaseFactory[RegistrationCredentialsValue],
-):
+class RegistrationCredentialsValueFactory(BaseFactory[RegistrationCredentialsValue]):
     class Meta:
         model = RegistrationCredentialsValue
 
@@ -17,9 +15,7 @@ class RegistrationCredentialsValueFactory(
     password2 = 'test_password'
 
 
-class AuthenticationCredentialsValueFactory(
-    BaseFactory[AuthenticationCredentialsValue],
-):
+class AuthenticationCredentialsValueFactory(BaseFactory[AuthenticationCredentialsValue]):
     class Meta:
         model = AuthenticationCredentialsValue
 

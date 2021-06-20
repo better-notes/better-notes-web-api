@@ -23,8 +23,7 @@ class AccountRegisterUseCase:
         user_entity, *_ = await self.user_repository.add(
             account_value_list=[
                 values.AccountValue(
-                    username=registration_credentials.username,
-                    password_hash=password_hash,
+                    username=registration_credentials.username, password_hash=password_hash,
                 )
             ]
         )
@@ -50,23 +49,17 @@ class AccountAuthenticateUseCase:
     hash_verifier: PasswordHash
 
     async def authenticate(
-        self,
-        *,
-        authentication_credentials: values.AuthenticationCredentialsValue,
+        self, *, authentication_credentials: values.AuthenticationCredentialsValue,
     ) -> entities.AccountEntity:
         account_entities = await self.user_repository.get(
-            spec=UsernameSpecification(
-                username=authentication_credentials.username,
-            ),
+            spec=UsernameSpecification(username=authentication_credentials.username),
             paging=Paging(limit=1, offset=0),
         )
         if not account_entities:
             raise UserDoesNotExistError()
 
         account_entity = account_entities[0]
-        password_hash = await self.user_repository.get_password_hash(
-            account_entity=account_entity,
-        )
+        password_hash = await self.user_repository.get_password_hash(account_entity=account_entity)
         password_valid = self.hash_verifier.verify(
             secret=authentication_credentials.password, hash=password_hash,
         )
@@ -104,8 +97,7 @@ class AccountSessionInteractor:
     ) -> entities.AccountSessionEntity:
         session_id = self.generate_user_session_id()
         account_session = entities.AccountSessionEntity(
-            token=values.AuthenticationTokenValue(value=session_id),
-            account=account_entity,
+            token=values.AuthenticationTokenValue(value=session_id), account=account_entity,
         )
         account_sessions = await self.account_session_repository.add(
             account_session_entity_list=[account_session],

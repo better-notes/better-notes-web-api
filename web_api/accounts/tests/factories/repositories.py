@@ -1,9 +1,6 @@
 import factory
 
-from web_api.accounts.repositories import (
-    AccountRepository,
-    AccountSessionRepository,
-)
+from web_api.accounts.repositories import AccountRepository, AccountSessionRepository
 from web_api.commons.tests.factories import (
     AsyncFactory,
     BaseFactory,

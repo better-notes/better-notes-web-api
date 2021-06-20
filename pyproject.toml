@@ -26,7 +26,7 @@ httpx = "^0.16.1"
 pytest-aiohttp = "^0.3.0"
 pytest-asyncio = "^0.14.0"
 flake8-functions = "^0.0.4"
-isort = "^4.3.21"
+isort = "5.8.0"
 pytest-cov = "^2.10.1"
 flakehell = "^0.7.1"
 bpython = "^0.20.1"
@@ -36,7 +36,7 @@ ipython = "^7.22.0"
 ipdb = "^0.13.7"
 
 [tool.black]
-line-length = 79
+line-length = 100
 py38 = true
 skip-string-normalization = true
 exclude = '(\.git|\.venv)'
@@ -49,6 +49,7 @@ build-backend = "poetry.masonry.api"
 [tool.isort]
 multi_line_output = 3
 include_trailing_comma = true
+line_length = 100
 
 [tool.flakehell]
 baseline = ".flakehell_baseline"
@@ -60,7 +61,7 @@ doctests = true
 enable_extensions = "G"
 accept_encodings = "utf-8"
 max_complexity = 6
-max_line_length = 79
+max_line_length = 100
 
 # Global ignores are copied from we-make-python recommended flakehell config.
 # https://github.com/wemake-services/wemake-python-styleguide/blob/master/styles/flakehell.toml

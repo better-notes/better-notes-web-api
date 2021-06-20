@@ -60,19 +60,14 @@ class AccountRepository(AbstractRepository):
             value_data.pop('password_hash')
             inserted_entities.append(
                 entities.AccountEntity(
-                    id_=str(user_insert.inserted_id),
-                    created_at=created_at,
-                    **value_data,
+                    id_=str(user_insert.inserted_id), created_at=created_at, **value_data,
                 ),
             )
 
         return inserted_entities
 
     async def get(
-        self,
-        *,
-        spec: commons.specs.Specification,
-        paging: commons.values.Paging,
+        self, *, spec: commons.specs.Specification, paging: commons.values.Paging,
     ) -> list[entities.AccountEntity]:
         # fmt: off
         cursor = self.users_collection.find(
@@ -85,8 +80,7 @@ class AccountRepository(AbstractRepository):
             account_entity_dict.pop('password_hash')
             account_entity_list.append(
                 entities.AccountEntity(
-                    id_=str(account_entity_dict.pop('_id')),
-                    **account_entity_dict,
+                    id_=str(account_entity_dict.pop('_id')), **account_entity_dict,
                 ),
             )
         return account_entity_list
@@ -108,14 +102,10 @@ class AccountRepository(AbstractRepository):
         for entity in account_entity_list:
             id_value_list.append(bson.ObjectId(entity.id_))
 
-        await self.users_collection.delete_many(
-            {'_id': {'$in': id_value_list}},
-        )
+        await self.users_collection.delete_many({'_id': {'$in': id_value_list}})
         return account_entity_list
 
-    async def get_password_hash(
-        self, *, account_entity: entities.AccountEntity,
-    ) -> str:
+    async def get_password_hash(self, *, account_entity: entities.AccountEntity) -> str:
         """Get password hash for given account entity."""
         account_entity_projection = await self.users_collection.find_one(
             {'_id': bson.ObjectId(account_entity.id_)}, ['password_hash'],
@@ -138,9 +128,7 @@ class AccountSessionRepository(AbstractRepository):
     client: Redis
 
     async def add(
-        self,
-        *,
-        account_session_entity_list: list[entities.AccountSessionEntity],
+        self, *, account_session_entity_list: list[entities.AccountSessionEntity],
     ) -> list[entities.AccountSessionEntity]:
         for account_session_entity in account_session_entity_list:
             await self.client.set(
@@ -152,16 +140,12 @@ class AccountSessionRepository(AbstractRepository):
         return account_session_entity_list
 
     async def get(
-        self,
-        *,
-        authentication_token_value_list: list[values.AuthenticationTokenValue],
+        self, *, authentication_token_value_list: list[values.AuthenticationTokenValue],
     ) -> list[entities.AccountSessionEntity]:
         account_session_entity_list = []
 
         for authentication_token_value in authentication_token_value_list:
-            entity_json = await self.client.get(
-                authentication_token_value.value,
-            )
+            entity_json = await self.client.get(authentication_token_value.value)
 
             if entity_json is None:
                 raise AccountSessionNotFoundError()

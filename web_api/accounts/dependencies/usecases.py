@@ -17,21 +17,15 @@ def get_bcrypt() -> bcrypt:
 
 
 def get_account_register_use_case(
-    user_repository: repositories.AccountRepository = Depends(
-        get_account_repository,
-    ),
+    user_repository: repositories.AccountRepository = Depends(get_account_repository),
     hasher: bcrypt = Depends(get_bcrypt),
 ) -> usecases.AccountRegisterUseCase:
     """Get account registration use case."""
-    return usecases.AccountRegisterUseCase(
-        user_repository=user_repository, hasher=hasher,
-    )
+    return usecases.AccountRegisterUseCase(user_repository=user_repository, hasher=hasher)
 
 
 def get_account_authenticate_use_case(
-    user_repository: repositories.AccountRepository = Depends(
-        get_account_repository,
-    ),
+    user_repository: repositories.AccountRepository = Depends(get_account_repository),
     hash_verifier: bcrypt = Depends(get_bcrypt),
 ) -> usecases.AccountAuthenticateUseCase:
     """Get account authentication use case."""
@@ -49,9 +43,7 @@ def get_account_session_interactor(
     user_session_repository: repositories.AccountSessionRepository = Depends(
         get_account_session_repository,
     ),
-    user_session_id_generator: Callable[[], str] = Depends(
-        get_account_session_id_generator,
-    ),
+    user_session_id_generator: Callable[[], str] = Depends(get_account_session_id_generator),
 ) -> usecases.AccountSessionInteractor:
     """Get account session interactor."""
     return usecases.AccountSessionInteractor(

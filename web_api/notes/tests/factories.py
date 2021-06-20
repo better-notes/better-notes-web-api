@@ -1,11 +1,7 @@
 import factory
 
 from web_api import commons
-from web_api.commons.tests.factories import (
-    BaseFactory,
-    MotorClientFactory,
-    SettingsFactory,
-)
+from web_api.commons.tests.factories import BaseFactory, MotorClientFactory, SettingsFactory
 from web_api.commons.values import OrderingType
 from web_api.notes import repositories, usecases, values
 

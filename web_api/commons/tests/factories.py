@@ -12,9 +12,7 @@ Type = TypeVar('Type')
 
 
 class BaseFactory(
-    Generic[Type],
-    factory.base.BaseFactory,
-    metaclass=factory.base.FactoryMetaClass,
+    Generic[Type], factory.base.BaseFactory, metaclass=factory.base.FactoryMetaClass,
 ):
     class Meta(factory.base.BaseMeta):
         """Base meta."""

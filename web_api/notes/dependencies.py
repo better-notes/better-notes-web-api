@@ -17,17 +17,13 @@ def get_note_repository(
 
 
 def get_note_interactor(
-    note_repository: repositories.NoteRepository = Depends(
-        get_note_repository,
-    ),
+    note_repository: repositories.NoteRepository = Depends(get_note_repository),
 ) -> usecases.NoteInteractor:
     """Get note interactor."""
     return usecases.NoteInteractor(note_repository=note_repository)
 
 
-def get_tag_value_list(
-    tags: list[str] = Query([], alias='tag'),
-) -> list[TagValue]:
+def get_tag_value_list(tags: list[str] = Query([], alias='tag')) -> list[TagValue]:
     """Get tag values from query params."""
     tag_value_list = []
     for tag in tags:

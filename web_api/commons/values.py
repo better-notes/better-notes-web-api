@@ -23,9 +23,7 @@ class Paging(Value):
     def validate_max_limit(cls, limit: int) -> int:
         max_limit = 20
         if limit > max_limit:
-            raise ValueError(
-                "Max limit can't be greater than {0}".format(max_limit),
-            )
+            raise ValueError("Max limit can't be greater than {0}".format(max_limit))
 
         return limit
 
