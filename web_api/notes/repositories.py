@@ -70,7 +70,8 @@ class NoteRepository(AbstractRepository):
         raw_note_list = cursor.limit(paging.limit).skip(paging.offset)
         note_list = []
         async for note in raw_note_list:
-            note_list.append(entities.NoteEntity(id_=str(note.pop('_id')), **note))
+            note = entities.NoteEntity(id_=str(note.pop('_id')), **note)
+            note_list.append(note)
         return note_list
 
     async def update(self, *, spec: Specification, note_value: values.NoteValue) -> int:

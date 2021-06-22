@@ -11,29 +11,6 @@ from web_api.accounts.dependencies.repositories import (
 )
 
 
-def get_bcrypt() -> bcrypt:
-    """Get bcrypt hasher."""
-    return bcrypt
-
-
-def get_account_register_use_case(
-    user_repository: repositories.AccountRepository = Depends(get_account_repository),
-    hasher: bcrypt = Depends(get_bcrypt),
-) -> usecases.AccountRegisterUseCase:
-    """Get account registration use case."""
-    return usecases.AccountRegisterUseCase(user_repository=user_repository, hasher=hasher)
-
-
-def get_account_authenticate_use_case(
-    user_repository: repositories.AccountRepository = Depends(get_account_repository),
-    hash_verifier: bcrypt = Depends(get_bcrypt),
-) -> usecases.AccountAuthenticateUseCase:
-    """Get account authentication use case."""
-    return usecases.AccountAuthenticateUseCase(
-        user_repository=user_repository, hash_verifier=hash_verifier,
-    )
-
-
 def get_account_session_id_generator() -> Callable[[], str]:
     """Get account session id generator."""
     return secrets.token_hex
@@ -49,4 +26,39 @@ def get_account_session_interactor(
     return usecases.AccountSessionInteractor(
         account_session_repository=user_session_repository,
         generate_user_session_id=user_session_id_generator,
+    )
+
+
+def get_bcrypt() -> bcrypt:
+    """Get bcrypt hasher."""
+    return bcrypt
+
+
+def get_account_register_use_case(
+    user_repository: repositories.AccountRepository = Depends(get_account_repository),
+    hasher: bcrypt = Depends(get_bcrypt),
+    account_session_interactor: usecases.AccountSessionInteractor = Depends(
+        get_account_session_interactor,
+    ),
+) -> usecases.AccountRegisterUseCase:
+    """Get account registration use case."""
+    return usecases.AccountRegisterUseCase(
+        user_repository=user_repository,
+        hasher=hasher,
+        account_session_interactor=account_session_interactor,
+    )
+
+
+def get_account_authenticate_use_case(
+    user_repository: repositories.AccountRepository = Depends(get_account_repository),
+    hash_verifier: bcrypt = Depends(get_bcrypt),
+    account_session_interactor: usecases.AccountSessionInteractor = Depends(
+        get_account_session_interactor,
+    ),
+) -> usecases.AccountAuthenticateUseCase:
+    """Get account authentication use case."""
+    return usecases.AccountAuthenticateUseCase(
+        user_repository=user_repository,
+        hash_verifier=hash_verifier,
+        account_session_interactor=account_session_interactor,
     )

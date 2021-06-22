@@ -27,16 +27,13 @@ router = APIRouter()
 async def register(
     registration_credentials: RegistrationCredentialsValue,
     account_register_use_case: AccountRegisterUseCase = Depends(get_account_register_use_case),
-    user_session_interactor: AccountSessionInteractor = Depends(get_account_session_interactor),
 ) -> JSONResponse:
-    account_entity = await account_register_use_case.register(
+    account_session_entity = await account_register_use_case.register(
         registration_credentials=registration_credentials,
     )
-    user_session = await user_session_interactor.add(account_entity=account_entity)
-
     response = JSONResponse(content={})
     response.set_cookie(
-        key='authentication_token', value=user_session.token.value, httponly=True,
+        key='authentication_token', value=account_session_entity.token.value, httponly=True,
     )
 
     return response
@@ -48,16 +45,14 @@ async def authenticate(
     account_authenticate_use_case: AccountAuthenticateUseCase = Depends(
         get_account_authenticate_use_case,
     ),
-    user_session_interactor: AccountSessionInteractor = Depends(get_account_session_interactor),
 ) -> JSONResponse:
-    user = await account_authenticate_use_case.authenticate(
+    account_session_entity = await account_authenticate_use_case.authenticate(
         authentication_credentials=authentication_credentials,
     )
-    user_session = await user_session_interactor.add(account_entity=user)
 
     response = JSONResponse(content={})
     response.set_cookie(
-        key='authentication_token', value=user_session.token.value, httponly=True,
+        key='authentication_token', value=account_session_entity.token.value, httponly=True,
     )
 
     return response

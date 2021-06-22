@@ -52,16 +52,19 @@ async def test_authenticate(client, app, reverse_route, snapshot):
     app.dependency_overrides[get_account_session_id_generator] = lambda: get_dummy_session_id
 
     password = 'test_password'
+    username = 'test_username'
+
     registration_credentials = RegistrationCredentialsValueFactory(
-        password1=password, password2=password,
+        username=username, password1=password, password2=password,
     )
-    account_register_use_case = AccountRegisterUseCaseFactory()
-    user_entity = await account_register_use_case.register(
-        registration_credentials=registration_credentials,
+    account_register_use_case = AccountRegisterUseCaseFactory(
+        account_session_interactor=await AccountSessionInteractorFactory(),
     )
 
+    await account_register_use_case.register(registration_credentials=registration_credentials)
+
     authentication_credentials = AuthenticationCredentialsValueFactory(
-        username=user_entity.username, password=password,
+        username=username, password=password,
     )
     response = await client.post(
         reverse_route('authenticate'), json=authentication_credentials.dict(),
