@@ -19,6 +19,8 @@ from web_api.accounts.values import (
     AuthenticationTokenValue,
     RegistrationCredentialsValue,
 )
+from web_api.notes.dependencies import get_add_welcome_note_usecase
+from web_api.notes.usecases import AddWelcomeNoteUsecase
 
 router = APIRouter()
 
@@ -27,10 +29,14 @@ router = APIRouter()
 async def register(
     registration_credentials: RegistrationCredentialsValue,
     account_register_use_case: AccountRegisterUseCase = Depends(get_account_register_use_case),
+    add_welcome_note_usecase: AddWelcomeNoteUsecase = Depends(get_add_welcome_note_usecase),
 ) -> JSONResponse:
     account_session_entity = await account_register_use_case.register(
         registration_credentials=registration_credentials,
     )
+
+    await add_welcome_note_usecase.add_welcome_note(account_entity=account_session_entity.account)
+
     response = JSONResponse(content={})
     response.set_cookie(
         key='authentication_token', value=account_session_entity.token.value, httponly=True,

@@ -73,3 +73,27 @@ class NoteInteractor:
         )
 
         return note_entity_list
+
+
+@dataclasses.dataclass
+class AddWelcomeNoteUsecase:
+    """Add welcome note for new users explaining the basics of using the app."""
+
+    note_repository: NoteRepository
+
+    async def add_welcome_note(self, *, account_entity: AccountEntity) -> None:
+        """Add welcome note."""
+        welcome_note_value = NoteValue(
+            text=' '.join(
+                [
+                    '#Welcome to #BetterNotes. Every note might have a #tag assigned to it.',
+                    'Just type any memorable word prefixed with # sign in any part of your note.',
+                    'Remember that tags are the main way of searching your notes.',
+                ],
+            ),
+            tags=[TagValue(name='Welcome'), TagValue(name='BetterNotes'), TagValue(name='tag')],
+        )
+
+        await self.note_repository.add(
+            account_entity=account_entity, note_value_list=[welcome_note_value],
+        )

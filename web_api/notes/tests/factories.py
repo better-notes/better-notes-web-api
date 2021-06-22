@@ -49,3 +49,10 @@ class NoteOrderingFactory(BaseFactory[values.NoteOrdering]):
         model = values.NoteOrdering
 
     created_at = OrderingType.ascending
+
+
+class AddWelcomeNoteUsecaseFactory(BaseFactory[usecases.AddWelcomeNoteUsecase]):
+    class Meta:
+        model = usecases.AddWelcomeNoteUsecase
+
+    note_repository = factory.SubFactory(NoteRepositoryFactory)

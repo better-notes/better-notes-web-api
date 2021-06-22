@@ -30,3 +30,10 @@ def get_tag_value_list(tags: list[str] = Query([], alias='tag')) -> list[TagValu
         tag_value_list.append(TagValue(name=tag))
 
     return tag_value_list
+
+
+def get_add_welcome_note_usecase(
+    note_repository: repositories.NoteRepository = Depends(get_note_repository),
+) -> usecases.AddWelcomeNoteUsecase:
+    """Get add welcome note usecase."""
+    return usecases.AddWelcomeNoteUsecase(note_repository=note_repository)
