@@ -18,10 +18,7 @@ class NoteInteractor:
     note_repository: NoteRepository
 
     async def add(
-        self,
-        *,
-        account_entity: AccountEntity,
-        note_value_list: list[NoteValue],
+        self, *, account_entity: AccountEntity, note_value_list: list[NoteValue],
     ) -> list[NoteEntity]:
         """Add notes into db. Return added notes."""
         return await self.note_repository.add(
@@ -40,44 +37,29 @@ class NoteInteractor:
         if tag_value_list:
             spec = merge_specs(
                 specs.GetNoteSpecification(username=account_entity.username),
-                specs.GetNoteByTagsSpecification(
-                    tag_value_list=tag_value_list,
-                ),
+                specs.GetNoteByTagsSpecification(tag_value_list=tag_value_list),
             )
         else:
             spec = specs.GetNoteSpecification(username=account_entity.username)
 
-        return await self.note_repository.get(
-            spec=spec, paging=paging, ordering=ordering,
-        )
+        return await self.note_repository.get(spec=spec, paging=paging, ordering=ordering)
 
     async def update(
-        self,
-        *,
-        account_entity: AccountEntity,
-        note_entity_list: list[NoteEntity],
+        self, *, account_entity: AccountEntity, note_entity_list: list[NoteEntity],
     ) -> list[NoteEntity]:
         """Update given notes using id. Return updated notes."""
         for note_entity in note_entity_list:
             await self.note_repository.update(
                 spec=specs.UpdateNoteSpecification(
-                    username=account_entity.username,
-                    _id=bson.ObjectId(note_entity.id_),
+                    username=account_entity.username, _id=bson.ObjectId(note_entity.id_),
                 ),
-                note_value=NoteValue(
-                    **note_entity.dict(
-                        exclude={'id_', 'created_at', 'account'},
-                    ),
-                ),
+                note_value=NoteValue(**note_entity.dict(exclude={'id_', 'created_at', 'account'})),
             )
 
         return note_entity_list
 
     async def delete(
-        self,
-        *,
-        account_entity: AccountEntity,
-        note_entity_list: list[NoteEntity],
+        self, *, account_entity: AccountEntity, note_entity_list: list[NoteEntity],
     ) -> list[NoteEntity]:
         """Delete given notes using id. Return delete notes."""
         object_id_list = []
@@ -86,9 +68,32 @@ class NoteInteractor:
 
         await self.note_repository.delete(
             spec=specs.DeleteNoteSpecification(
-                username=account_entity.username,
-                object_id_list=object_id_list,
+                username=account_entity.username, object_id_list=object_id_list,
             ),
         )
 
         return note_entity_list
+
+
+@dataclasses.dataclass
+class AddWelcomeNoteUsecase:
+    """Add welcome note for new users explaining the basics of using the app."""
+
+    note_repository: NoteRepository
+
+    async def add_welcome_note(self, *, account_entity: AccountEntity) -> None:
+        """Add welcome note."""
+        welcome_note_value = NoteValue(
+            text=' '.join(
+                [
+                    '#Welcome to #BetterNotes. Every note might have a #tag assigned to it.',
+                    'Just type any memorable word prefixed with # sign in any part of your note.',
+                    'Remember that tags are the main way of searching your notes.',
+                ],
+            ),
+            tags=[TagValue(name='Welcome'), TagValue(name='BetterNotes'), TagValue(name='tag')],
+        )
+
+        await self.note_repository.add(
+            account_entity=account_entity, note_value_list=[welcome_note_value],
+        )

@@ -14,22 +14,23 @@ class AccountRegisterUseCase:
 
     user_repository: repositories.AccountRepository
     hasher: PasswordHash
+    account_session_interactor: 'AccountSessionInteractor'
 
     async def register(
         self, *, registration_credentials: values.RegistrationCredentialsValue,
-    ) -> entities.AccountEntity:
+    ) -> entities.AccountSessionEntity:
+        """Register account with given credentials."""
         password_hash = self.hasher.hash(registration_credentials.password1)
 
-        user_entity, *_ = await self.user_repository.add(
+        account_entity, *_ = await self.user_repository.add(
             account_value_list=[
                 values.AccountValue(
-                    username=registration_credentials.username,
-                    password_hash=password_hash,
-                )
-            ]
+                    username=registration_credentials.username, password_hash=password_hash,
+                ),
+            ],
         )
 
-        return user_entity
+        return await self.account_session_interactor.add(account_entity=account_entity)
 
 
 @dataclasses.dataclass
@@ -48,25 +49,20 @@ class PasswordNotValidError(HTTPException):
 class AccountAuthenticateUseCase:
     user_repository: repositories.AccountRepository
     hash_verifier: PasswordHash
+    account_session_interactor: 'AccountSessionInteractor'
 
     async def authenticate(
-        self,
-        *,
-        authentication_credentials: values.AuthenticationCredentialsValue,
-    ) -> entities.AccountEntity:
+        self, *, authentication_credentials: values.AuthenticationCredentialsValue,
+    ) -> entities.AccountSessionEntity:
         account_entities = await self.user_repository.get(
-            spec=UsernameSpecification(
-                username=authentication_credentials.username,
-            ),
+            spec=UsernameSpecification(username=authentication_credentials.username),
             paging=Paging(limit=1, offset=0),
         )
         if not account_entities:
             raise UserDoesNotExistError()
 
         account_entity = account_entities[0]
-        password_hash = await self.user_repository.get_password_hash(
-            account_entity=account_entity,
-        )
+        password_hash = await self.user_repository.get_password_hash(account_entity=account_entity)
         password_valid = self.hash_verifier.verify(
             secret=authentication_credentials.password, hash=password_hash,
         )
@@ -74,7 +70,7 @@ class AccountAuthenticateUseCase:
         if not password_valid:
             raise PasswordNotValidError()
 
-        return account_entity
+        return await self.account_session_interactor.add(account_entity=account_entity)
 
 
 @dataclasses.dataclass
@@ -104,8 +100,7 @@ class AccountSessionInteractor:
     ) -> entities.AccountSessionEntity:
         session_id = self.generate_user_session_id()
         account_session = entities.AccountSessionEntity(
-            token=values.AuthenticationTokenValue(value=session_id),
-            account=account_entity,
+            token=values.AuthenticationTokenValue(value=session_id), account=account_entity,
         )
         account_sessions = await self.account_session_repository.add(
             account_session_entity_list=[account_session],

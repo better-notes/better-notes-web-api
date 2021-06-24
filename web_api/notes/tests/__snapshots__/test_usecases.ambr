@@ -35,3 +35,22 @@
     },
   ]
 ---
+# name: test_add_welcome_note
+  <class 'dict'> {
+    'account': <class 'dict'> {
+      'username': 'test_username',
+    },
+    'tags': <class 'list'> [
+      <class 'dict'> {
+        'name': 'Welcome',
+      },
+      <class 'dict'> {
+        'name': 'BetterNotes',
+      },
+      <class 'dict'> {
+        'name': 'tag',
+      },
+    ],
+    'text': '#Welcome to #BetterNotes. Every note might have a #tag assigned to it. Just type any memorable word prefixed with # sign in any part of your note. Remember that tags are the main way of searching your notes.',
+  }
+---

@@ -1,8 +1,8 @@
 format:
 	poetry run black .
-	poetry run isort -rc -y .
+	poetry run isort .
 lint:
-	poetry run isort --check-only
+	poetry run isort . --check
 	poetry run flakehell lint .
 	# TODO: poetry run mypy --config-file=.config/mypy.ini .
 	poetry run black --check .

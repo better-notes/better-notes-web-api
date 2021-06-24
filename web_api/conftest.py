@@ -23,15 +23,11 @@ async def motor_client():  # type: ignore
     settings = Settings()
     loop = asyncio.get_event_loop()
 
-    return motor_asyncio.AsyncIOMotorClient(
-        settings.mongo_host, settings.mongo_port, io_loop=loop,
-    )
+    return motor_asyncio.AsyncIOMotorClient(settings.mongo_host, settings.mongo_port, io_loop=loop)
 
 
 @pytest.fixture(autouse=True)
-async def clear_mongo(
-    motor_client: motor_asyncio.AsyncIOMotorClient,  # noqa: WPS442
-):
+async def clear_mongo(motor_client: motor_asyncio.AsyncIOMotorClient):  # noqa: WPS442
     """Clear mongodb before and after each test."""
     settings = Settings()
     await motor_client.drop_database(settings.mongo_database)

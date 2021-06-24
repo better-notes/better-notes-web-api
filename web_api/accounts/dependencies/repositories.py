@@ -1,7 +1,7 @@
-from aioredis import create_redis
+import aioredis
 from aioredis.commands import Redis
 from fastapi import Depends
-from motor import motor_asyncio  # type: ignore
+from motor import motor_asyncio
 
 from web_api.accounts import repositories
 from web_api.commons.dependencies import get_mongo_client, get_settings
@@ -18,7 +18,10 @@ def get_account_repository(
 
 async def get_redis(settings: Settings = Depends(get_settings)) -> Redis:
     """Get redis client."""
-    return await create_redis(settings.redis_address)
+    pool = await aioredis.create_redis_pool(settings.redis_address)
+    yield pool
+    pool.close()
+    await pool.wait_closed()
 
 
 def get_account_session_repository(

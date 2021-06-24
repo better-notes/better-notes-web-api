@@ -3,9 +3,7 @@ import logging
 from pydantic import BaseSettings
 
 logging.basicConfig(
-    level=logging.INFO,
-    format='[{asctime} - {name} - {levelname}]: {message}',
-    style='{',
+    level=logging.INFO, format='[{asctime} - {name} - {levelname}]: {message}', style='{',
 )
 
 

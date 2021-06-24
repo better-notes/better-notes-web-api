@@ -12,9 +12,7 @@ Type = TypeVar('Type')
 
 
 class BaseFactory(
-    Generic[Type],
-    factory.base.BaseFactory,
-    metaclass=factory.base.FactoryMetaClass,
+    Generic[Type], factory.base.BaseFactory, metaclass=factory.base.FactoryMetaClass,
 ):
     class Meta(factory.base.BaseMeta):
         """Base meta."""
@@ -38,7 +36,7 @@ class AsyncFactory(factory.Factory):
                     kwargs[key] = await value
             return model_class(*args, **kwargs)
 
-        return asyncio.create_task(maker_coroutine())
+        return asyncio.ensure_future(maker_coroutine())
 
 
 class SettingsFactory(BaseFactory[motor_asyncio.AsyncIOMotorClient]):

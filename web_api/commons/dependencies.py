@@ -15,9 +15,7 @@ async def get_mongo_client(
 ) -> motor_asyncio.AsyncIOMotorClient:
     """Get mongo client."""
     # XXX: async b/c motor client requires loop for instantiation ¯\_(ツ)_/¯
-    return motor_asyncio.AsyncIOMotorClient(
-        settings.mongo_host, settings.mongo_port,
-    )
+    return motor_asyncio.AsyncIOMotorClient(settings.mongo_host, settings.mongo_port)
 
 
 async def get_paging(limit: int, offset: int) -> Paging:

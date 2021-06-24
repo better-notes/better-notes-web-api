@@ -6,16 +6,13 @@ from pydantic.error_wrappers import ValidationError
 from starlette.middleware.cors import CORSMiddleware
 
 from web_api.accounts import views as accounts_views
-from web_api.commons.exception_handlers import (
-    validation_error_exception_handler,
-)
+from web_api.commons.exception_handlers import validation_error_exception_handler
 from web_api.notes import views as notes_views
 from web_api.settings import Settings
 
 
-def include_api_v1_router(
-    app: FastAPI, router: APIRouter, tags: list[str],
-) -> None:
+def include_api_v1_router(app: FastAPI, router: APIRouter, tags: list[str]) -> None:
+    """Prefix all given routes with first version."""
     api_v1_prefix = '/api/v1'
     app.include_router(router, prefix=api_v1_prefix, tags=tags)
 
